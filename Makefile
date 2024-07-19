@@ -16,11 +16,12 @@ CFLAGS = -mcpu=cortex-m4 -mthumb -nostdlib $(addprefix -I, $(INC_DIRS)) -DSTM32F
 
 # Source file directories
 CORE_SRC_DIR = Core/Src
+STARTUP_SRC_DIR = Core/Startup
 DRIVERS_SRC_DIR = Drivers/STM32F4xx_HAL_Driver/Src
 
 # Source files from directories
-SRCS = $(wildcard $(CORE_SRC_DIR)/*.c) $(wildcard $(DRIVERS_SRC_DIR)/*.c)
-OBJS = $(SRCS:.c=.o)
+SRCS = $(wildcard $(CORE_SRC_DIR)/*.c) $(wildcard $(STARTUP_SRC_DIR)/*.s) $(wildcard $(DRIVERS_SRC_DIR)/*.c)
+OBJS = $(SRCS:.c=.o) 
 
 # Output file
 TARGET = rtos.elf

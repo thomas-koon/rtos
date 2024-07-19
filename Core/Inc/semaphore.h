@@ -3,7 +3,7 @@
 
 #include "rtos.h"
 
-typedef struct 
+typedef struct sem_ll_node_t
 {
     tcb_t * task;
     struct sem_ll_node_t * next;

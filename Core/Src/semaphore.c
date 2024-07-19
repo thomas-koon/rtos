@@ -1,6 +1,9 @@
 #include "semaphore.h"
 #include "scheduler.h"
 #include <stddef.h>
+#include <stdlib.h>
+#include "stm32f4xx.h"
+#include "stm32f4xx_hal.h"
 
 static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
 
@@ -17,7 +20,7 @@ void sem_post(sem_t * sem)
 
     __disable_irq();
 
-    tcb_t * curr_task = rtos_get_current_task();
+    tcb_t * curr_task = get_current_task();
     curr_task->deadline = curr_task->og_deadline;
     
     if(sem->waiting_head == NULL) 
@@ -55,9 +58,9 @@ void sem_wait(sem_t * sem)
 
     __disable_irq();
 
-    tcb_t * curr_task = rtos_get_current_task();
+    tcb_t * curr_task = get_current_task();
 
-    uint32_t new_deadline = get_clock() + sem->deadline_floor;
+    uint32_t new_deadline = HAL_GetTick() + sem->deadline_floor;
 
     if (new_deadline < curr_task->deadline) 
     {

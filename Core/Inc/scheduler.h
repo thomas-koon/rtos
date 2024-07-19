@@ -9,7 +9,7 @@ typedef struct ready_node_t
     struct ready_node_t * next;
 } ready_node_t;
 
-void scheduler_init(void);
+void scheduler_init(tcb_t * first_task);
 void add_task(tcb_t *task);
 void insert_task_in_ready_queue(tcb_t *task);
 void remove_task_from_ready_queue(tcb_t *task);

@@ -4,6 +4,7 @@
         "stm32f4xx.h": "c",
         "stm32f4xx_hal_def.h": "c",
         "stm32f446xx.h": "c",
-        "stm32f4xx_hal_conf.h": "c"
+        "stm32f4xx_hal_conf.h": "c",
+        "main.h": "c"
     }
 }

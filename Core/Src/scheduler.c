@@ -12,7 +12,7 @@ static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task;
 static uint32_t num_tasks;
 
-void scheduler_init(void) 
+void scheduler_init(tcb_t * first_task) 
 {
     
     for (uint32_t i = 0; i < MAX_TASKS; i++) 
@@ -22,7 +22,7 @@ void scheduler_init(void)
     
     }
 
-    curr_task = NULL;
+    curr_task = first_task;
     num_tasks = 0;
 
 }
@@ -115,8 +115,7 @@ void scheduler(void)
 {
     __disable_irq();
 
-    tcb_t *curr_task = get_current_task();
-    tcb_t *next_task = get_next_task();
+    tcb_t * next_task = get_next_task();
 
     // if task in ready queue
     if (next_task != NULL && next_task->state == TASK_READY)
@@ -154,7 +153,7 @@ __attribute((naked)) void PendSV_Handler(void)
     // TODO: use r13 instead of psp ??
     __asm volatile 
     (
-        "" 
+        // save the context of the current task 
         "     mrs r0, psp                     \n" // get current PSP
         "     isb                             \n"
         "     ldr r1, =curr_task              \n" // load address of curr_task into r1
@@ -162,11 +161,12 @@ __attribute((naked)) void PendSV_Handler(void)
         "     stmdb r0!, {r4-r11}             \n" // store r4 - r11 on process stack
         "     str r0, [r2]                    \n" // Save PSP to curr_task->stack_top 
 
-        "     ldr r1, =next_task              \n" // load address of next_task into r1
-        "     ldr r2, [r1]                    \n" // load pointer to next_task's TCB
-        "     ldr r0, [r2]                    \n" // prepare to load next stack top to PSP
-        "     ldmia r0!, {r4-r11}             \n" // restore r4-r11 from next_task's stack
-        "     msr psp, r0                     \n" // update PSP with next_task->stack_top
+        "     bl get_next_task                \n"
+
+        // restore the context of the next task
+        "     ldr r2, [r0]                    \n" // load pointer to next_task's TCB
+        "     ldmia r2!, {r4-r11}             \n" // restore r4-r11 from next_task's stack
+        "     msr psp, r2                     \n" // update PSP with next_task->stack_top
         "     bx lr                           \n"
     );
 }
