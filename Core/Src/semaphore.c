@@ -1,8 +1,13 @@
 #include "semaphore.h"
+#include "scheduler.h"
+#include <stddef.h>
 
-void sem_init(sem_t * sem, int init_count)
+static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
+
+void sem_init(sem_t * sem, int init_count, int deadline_floor)
 {
-    sem->count = count;
+    sem->count = init_count;
+    sem->deadline_floor = deadline_floor;
     sem->waiting_head = NULL;
     sem->waiting_tail = NULL;
 }
@@ -13,11 +18,12 @@ void sem_post(sem_t * sem)
     __disable_irq();
 
     tcb_t * curr_task = rtos_get_current_task();
-    task->deadline = task->og_deadline;
+    curr_task->deadline = curr_task->og_deadline;
     
     if(sem->waiting_head == NULL) 
     {
         sem->count++; // if no tasks waiting, resource available
+        __enable_irq();
     }
     else
     {
@@ -34,11 +40,13 @@ void sem_post(sem_t * sem)
         free(head); 
 
         task->state = TASK_READY;
-        // insert in ready queue
+        insert_task_in_ready_queue(task);
 
+        __enable_irq();
+        scheduler();
     }
 
-    __enable_irq();
+    
 
 }
 
@@ -53,9 +61,10 @@ void sem_wait(sem_t * sem)
 
     if (new_deadline < curr_task->deadline) 
     {
-        current_task->deadline = new_deadline;  
+        curr_task->deadline = new_deadline;  
     }
 
+    // if the resource is available
     if (sem->count > 0) 
     {
         sem->count--; 
@@ -63,6 +72,7 @@ void sem_wait(sem_t * sem)
         return;
     }
     
+    // resource not available: wait on the semaphore queue
     sem_ll_node_t * new_node = (sem_ll_node_t *) malloc(sizeof(sem_ll_node_t));
     
     if(new_node == NULL)
@@ -74,19 +84,19 @@ void sem_wait(sem_t * sem)
     new_node->task = curr_task;
     new_node->next = NULL;
 
-    insert_task_in_order(sem, new_node);
+    sem_queue_task(sem, new_node);
 
     curr_task->state = TASK_BLOCKED;
 
     __enable_irq();
 
-    rtos_block_task();
+    scheduler();
 
 }
 
-void insert_task_in_order(sem_t* sem, sem_ll_node_t* new_node) {
+static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node) {
     sem_ll_node_t* prev = NULL;
-    sem_ll_node_t* current = sem->waiting_queue_head;
+    sem_ll_node_t* current = sem->waiting_head;
 
     while (current != NULL && current->task->deadline < new_node->task->deadline) 
     {

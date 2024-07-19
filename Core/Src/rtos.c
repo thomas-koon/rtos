@@ -1,5 +1,7 @@
 #include "rtos.h"
 #include "scheduler.h"
+#include <string.h>
+#include <stdlib.h>
 
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size);
 
@@ -9,17 +11,19 @@ void rtos_init(void)
     
 }
 
-rtos_create_task(tcb_t *task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size)
+void rtos_create_task(tcb_t *task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size)
 {
-    task = (struct tcb_t *) malloc(sizeof(tcb_t));
+    task = (tcb_t *) malloc(sizeof(tcb_t));
     task->stack_top = stack + stack_size - 1;
     task->stack_bottom = stack;
     task->task_func = task_func;
     task->deadline = deadline;
     task->og_deadline = deadline;
-    task->task_state_t = TASK_READY;
+    task->state = TASK_READY;
 
     init_task_stack(task, task_func, parameters, stack, stack_size);
+
+    add_task(task);
 }
 
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size)

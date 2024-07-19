@@ -2,7 +2,6 @@
 #define RTOS_H
 
 #include <stdint.h>
-#include "semaphore.h"
 
 // Tasks in RTOS don't exit; return void
 typedef void (*task_func_t)(void *);
