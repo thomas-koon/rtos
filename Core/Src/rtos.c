@@ -5,12 +5,6 @@
 
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size);
 
-void rtos_init(void)
-{
-    scheduler_init();
-    
-}
-
 void rtos_create_task(tcb_t *task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size)
 {
     task = (tcb_t *) malloc(sizeof(tcb_t));

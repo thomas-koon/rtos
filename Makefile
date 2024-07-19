@@ -36,4 +36,4 @@ $(TARGET): $(OBJS)
 
 # Clean rule
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(filter-out $(STARTUP_SRC_DIR)/%.s, $(OBJS)) $(TARGET)
