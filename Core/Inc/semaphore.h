@@ -1,7 +1,7 @@
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
 
-#include "rtos.h"
+#include "task.h"
 
 typedef struct sem_ll_node_t
 {

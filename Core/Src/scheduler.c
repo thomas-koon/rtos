@@ -115,6 +115,8 @@ void scheduler(void)
 {
     __disable_irq();
 
+    // TODO: Handle expired task
+
     tcb_t * next_task = get_next_task();
 
     // if task in ready queue
@@ -149,8 +151,6 @@ void scheduler(void)
 
 __attribute((naked)) void PendSV_Handler(void)
 {
-    // TODO: switch from MSP to PSP ??
-    // TODO: use r13 instead of psp ??
     __asm volatile 
     (
         // save the context of the current task 
@@ -159,7 +159,7 @@ __attribute((naked)) void PendSV_Handler(void)
         "     ldr r1, =curr_task              \n" // load address of curr_task into r1
         "     ldr r2, [r1]                    \n" // load pointer to curr_task's TCB
         "     stmdb r0!, {r4-r11}             \n" // store r4 - r11 on process stack
-        "     str r0, [r2]                    \n" // Save PSP to curr_task->stack_top 
+        "     str r0, [r2]                    \n" // Set curr_task->stack_top to PSP
 
         "     bl get_next_task                \n"
 

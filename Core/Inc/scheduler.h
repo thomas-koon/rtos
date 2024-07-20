@@ -1,7 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include "rtos.h"
+#include "task.h"
 
 typedef struct ready_node_t
 {

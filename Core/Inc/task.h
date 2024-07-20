@@ -25,6 +25,7 @@ typedef struct
     task_state_t state;
 } tcb_t;
 
-void rtos_create_task(tcb_t *task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size);
+void create_task(tcb_t *task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size);
+void update_task_deadline(tcb_t *task, uint32_t deadline);
 
 #endif // RTOS_H
