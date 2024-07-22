@@ -50,15 +50,13 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-uint32_t *task1_stack;
-uint32_t *task2_stack;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void UART_Print(const char *str);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -66,21 +64,21 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void *task1_func(void)
+void task1_func(void *parameters)
 {
   while(1)
   {
     UART_Print("task1\r\n");
-    update_task_deadline(task1, HAL_GetTick() + 1000);
+    update_task_deadline(HAL_GetTick() + 1);
   }
 }
 
-void *task2_func(void)
+void task2_func(void *parameters)
 {
   while(1)
   {
     UART_Print("task2\r\n");
-    update_task_deadline(task1, HAL_GetTick() + 5000);
+    update_task_deadline(HAL_GetTick() + 5);
   }
 }
 
@@ -117,17 +115,16 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  tcb_t task1;
-  tcb_t task2;
+  tcb_t *task1;
+  tcb_t *task2;
 
-  task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
+  create_task(&task1, task1_func, NULL, HAL_GetTick() + 1, task1_stack, STACK_SIZE);
+  create_task(&task2, task2_func, NULL, HAL_GetTick() + 5, task2_stack, STACK_SIZE);
 
-  create_task(&task1, task1_func, NULL, HAL_GetTick() + 1000, task1_stack, STACK_SIZE);
-  create_task(&task2, task2_func, NULL, HAL_GetTick() + 5000, task2_stack, STACK_SIZE);
-
-  scheduler_init(&task1);
+  scheduler_init(task1);
 
   /* USER CODE END 2 */
 

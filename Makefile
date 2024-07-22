@@ -1,6 +1,13 @@
 # Compiler
 CC = arm-none-eabi-gcc
 
+# Toolchain and filenames
+OBJCOPY = arm-none-eabi-objcopy
+FLASH = st-flash
+ELF = rtos.elf
+BIN = rtos.bin
+OBJECTS = main.o other_module.o
+
 # Linker flags
 LDFLAGS = -T STM32F446RETX_FLASH.ld -mcpu=cortex-m4 -mthumb
 
@@ -12,7 +19,7 @@ INC_DIRS = \
     Drivers/CMSIS/Include
 
 # Define compiler flags
-CFLAGS = -mcpu=cortex-m4 -mthumb -nostdlib $(addprefix -I, $(INC_DIRS)) -DSTM32F446xx
+CFLAGS = -mcpu=cortex-m4 -mthumb -nostdlib $(addprefix -I, $(INC_DIRS)) -DSTM32F446xx -g
 
 # Source file directories
 CORE_SRC_DIR = Core/Src
@@ -37,3 +44,8 @@ $(TARGET): $(OBJS)
 # Clean rule
 clean:
 	rm -f $(filter-out $(STARTUP_SRC_DIR)/%.s, $(OBJS)) $(TARGET)
+
+# Convert ELF to BIN and Flash
+flash: $(ELF)
+	$(OBJCOPY) -O binary $(ELF) $(BIN)
+	$(FLASH) write $(BIN) 0x8000000

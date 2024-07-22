@@ -1,5 +1,5 @@
 #include "scheduler.h"
-#include "stm32f4xx.h"
+#include "stm32f4xx.h"  
 #include "stm32f4xx_it.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -10,30 +10,41 @@ static ready_node_t *ready_queue_head;
 static ready_node_t *ready_queue_tail;
 static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task;
-static uint32_t num_tasks;
+static tcb_t *next_task;
+static uint32_t num_tasks = 0;
 
 void scheduler_init(tcb_t * first_task) 
 {
-    
-    for (uint32_t i = 0; i < MAX_TASKS; i++) 
-    {
-    
-        tasks[i] = NULL;
-    
-    }
-
+    remove_task_from_ready_queue(first_task);
     curr_task = first_task;
-    num_tasks = 0;
+    curr_task->state = TASK_RUNNING;
 
+    update_next_task();
+
+    __set_PSP((uint32_t)first_task->stack_top);
+    __set_CONTROL(0x02);
+    __ISB();
+
+    // Use inline assembly to branch to the task function
+    asm volatile 
+    (
+        "ldr r0, [%1]       \n" // Load the value of first_task->parameters into R0 (first parameter)
+        "ldr r1, [%0]       \n" // Load the value of first_task->task_func into R1 (function pointer)
+        "mov lr, #0xFFFFFFFD\n" // Set the Link Register (LR) to the EXC_RETURN value for thread mode, using PSP
+        "bx r1              \n" // Branch to the address in R1 (task function)
+        : 
+        : "r"(&first_task->task_func), "r"(&first_task->parameters) // Input operands
+        : "r0", "r1" // Clobbered registers
+    );
 }
 
 void add_task(tcb_t *task) 
 {
 
     if(num_tasks < MAX_TASKS) 
-    {
-        num_tasks++;
+    {   
         tasks[num_tasks] = task;
+        num_tasks++;
         insert_task_in_ready_queue(task);
     }
 
@@ -69,6 +80,8 @@ void insert_task_in_ready_queue(tcb_t *task)
     {
         ready_queue_tail = task_node;
     }
+
+    update_next_task();
 }
 
 void remove_task_from_ready_queue(tcb_t *task) 
@@ -99,11 +112,25 @@ void remove_task_from_ready_queue(tcb_t *task)
         }
         current->next = NULL;
     }
+
+    update_next_task();
 }
 
-tcb_t* get_next_task(void) 
+/**
+ * @brief Called when adding a task, removing a task, or scheduling.
+ *        Used for telling the PendSV handler the next task to run. 
+ */
+void update_next_task(void) 
 {
-    return ready_queue_head->task;  
+    if(ready_queue_head->task->deadline <= curr_task->deadline)
+    {
+        next_task = ready_queue_head->task;  
+    }
+    else
+    {
+        next_task = curr_task;    
+    }
+   
 }
 
 tcb_t* get_current_task(void)
@@ -117,14 +144,14 @@ void scheduler(void)
 
     // TODO: Handle expired task
 
-    tcb_t * next_task = get_next_task();
+    tcb_t * next_ready_task = ready_queue_head->task;
 
     // if task in ready queue
-    if (next_task != NULL && next_task->state == TASK_READY)
+    if (next_ready_task != NULL && next_ready_task->state == TASK_READY)
     {
 
         // if ready task has earlier deadline than current task
-        if (curr_task == NULL || next_task->deadline <= curr_task->deadline)
+        if (curr_task == NULL || next_ready_task->deadline <= curr_task->deadline)
         {
             
             // queue the current task
@@ -134,13 +161,15 @@ void scheduler(void)
                 insert_task_in_ready_queue(curr_task);
             }
 
-            remove_task_from_ready_queue(next_task);
-            next_task->state = TASK_RUNNING;
+            remove_task_from_ready_queue(next_ready_task);
+            next_ready_task->state = TASK_RUNNING;
+
+            update_next_task();
 
             // trigger PendSV to handle the context switch
             SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 
-            curr_task = next_task;
+            curr_task = next_ready_task;
 
         }
 
@@ -161,12 +190,11 @@ __attribute((naked)) void PendSV_Handler(void)
         "     stmdb r0!, {r4-r11}             \n" // store r4 - r11 on process stack
         "     str r0, [r2]                    \n" // Set curr_task->stack_top to PSP
 
-        "     bl get_next_task                \n"
-
         // restore the context of the next task
-        "     ldr r2, [r0]                    \n" // load pointer to next_task's TCB
-        "     ldmia r2!, {r4-r11}             \n" // restore r4-r11 from next_task's stack
-        "     msr psp, r2                     \n" // update PSP with next_task->stack_top
+        "     ldr r0, =next_task              \n" // next task was updated before handler called
+        "     ldr r2, [r0]                    \n" // load pointer to next_ready_task's TCB
+        "     ldmia r2!, {r4-r11}             \n" // restore r4-r11 from next_ready_task's stack
+        "     msr psp, r2                     \n" // update PSP with next_ready_task->stack_top
         "     bx lr                           \n"
     );
 }

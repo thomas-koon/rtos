@@ -100,6 +100,32 @@ void HardFault_Handler(void)
 void MemManage_Handler(void)
 {
   /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+  uint32_t mmfsr = SCB->CFSR & 0xFF; // Memory Management Fault Status Register
+  uint32_t mmfar = SCB->MMFAR;       // Memory Management Fault Address Register
+    
+  // Check specific fault bits
+  if (mmfsr & (1 << 0)) 
+  {
+    // IACCVIOL: Instruction access violation
+  }
+  if (mmfsr & (1 << 1)) 
+  {
+    // DACCVIOL: Data access violation
+  }
+  if (mmfsr & (1 << 3)) 
+  {
+    // MUNSTKERR: Unstacking error
+  }
+  if (mmfsr & (1 << 4)) 
+  {
+    // MSTKERR: Stacking error
+  }
+  if (mmfsr & (1 << 7)) 
+  {
+    // MMARVALID: MMAR is valid
+    uint32_t fault_address = mmfar;
+    // Handle the fault address
+  }
 
   /* USER CODE END MemoryManagement_IRQn 0 */
   while (1)
