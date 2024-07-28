@@ -52,6 +52,7 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void UART_Print(const char *str);
 
 /* USER CODE BEGIN EFP */
 

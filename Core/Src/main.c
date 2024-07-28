@@ -58,7 +58,7 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void UART_Print(const char *str);
+void UART_Print(const char *str);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -71,8 +71,8 @@ void task1_func(void *parameters)
 {
   while(1)
   {
-    UART_Print("task1\r\n");
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    //UART_Print("task1\r\n");
+    //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
     update_task_deadline(HAL_GetTick() + 1);
   }
 }
@@ -82,16 +82,18 @@ void task2_func(void *parameters)
 {
   while(1)
   {
-    UART_Print("task2\r\n");
-    update_task_deadline(HAL_GetTick() + 5);
+    //UART_Print("task2\r\n");
+    update_task_deadline(HAL_GetTick() + 2);
   }
 }
 
-void disable_fpu(void) 
+#pragma align 4
+void task3_func(void *parameters)
 {
-    uint32_t fpccr = FPCCR;
-    fpccr &= ~((1U << 31) | (1U << 30));  // Clear ASPEN and LSPEN
-    FPCCR = fpccr;
+  while(1)
+  {
+    update_task_deadline(HAL_GetTick() + 3);
+  }
 }
 
 /* USER CODE END 0 */
@@ -130,12 +132,15 @@ int main(void)
 
   tcb_t *task1;
   tcb_t *task2;
+  tcb_t *task3;
 
   uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
-  create_task(&task1, task1_func, NULL, HAL_GetTick() + 1, task1_stack, STACK_SIZE);
-  create_task(&task2, task2_func, NULL, HAL_GetTick() + 5, task2_stack, STACK_SIZE);
+  create_task(&task1, task1_func, NULL, HAL_GetTick() + 1, task1_stack, STACK_SIZE, 1);
+  create_task(&task2, task2_func, NULL, HAL_GetTick() + 2, task2_stack, STACK_SIZE, 2);
+  create_task(&task3, task3_func, NULL, HAL_GetTick() + 3, task3_stack, STACK_SIZE, 3);
 
   scheduler_init(task1);
 

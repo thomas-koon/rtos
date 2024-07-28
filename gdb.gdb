@@ -4,8 +4,9 @@ target remote localhost:3333
 # Load the ELF file
 file rtos.elf
 
-break *0x80008da
-#break scheduler.c:181
+break main.c:76
+break main.c:86
+break main.c:96
 
 # Reset and halt the target
 monitor reset halt

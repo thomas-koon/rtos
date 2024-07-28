@@ -5,7 +5,7 @@
 
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size);
 
-void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size)
+void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size, uint8_t id)
 {
     *task = (tcb_t *) malloc(sizeof(tcb_t));
     
@@ -19,6 +19,7 @@ void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t
     (*task)->deadline = deadline;
     (*task)->og_deadline = deadline;
     (*task)->state = TASK_READY;
+    (*task)->id = id;
 
     init_task_stack(*task, task_func, parameters, stack, stack_size);
 

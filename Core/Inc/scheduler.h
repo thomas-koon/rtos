@@ -13,7 +13,6 @@ void scheduler_init(tcb_t * first_task);
 void add_task(tcb_t *task);
 void insert_task_in_ready_queue(tcb_t *task);
 void remove_task_from_ready_queue(tcb_t *task);
-void update_next_task(void);
 tcb_t * get_current_task(void);
 void scheduler(void);
 

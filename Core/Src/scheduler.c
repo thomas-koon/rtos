@@ -3,6 +3,7 @@
 #include "stm32f4xx_it.h"
 #include <stddef.h>
 #include <stdlib.h>
+#include "main.h"
 
 #define MAX_TASKS 10
 
@@ -12,6 +13,8 @@ static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task;
 static tcb_t *next_task;
 static uint32_t num_tasks = 0;
+
+static void update_next_task(void);
 
 void scheduler_init(tcb_t * first_task) 
 {
@@ -116,11 +119,10 @@ void remove_task_from_ready_queue(tcb_t *task)
 }
 
 /**
- * @details Called when adding a task, removing a task, or scheduling.
- *          Use this before removing a task in scheduler.
+ * @details Get the next task to run, either the current or the ready head.
  *          Used for telling the PendSV handler the next task to run. 
  */
-void update_next_task(void) 
+static void update_next_task(void) 
 {
     if(ready_queue_head->task->deadline <= curr_task->deadline)
     {
@@ -142,6 +144,19 @@ void scheduler(void)
 {
 
     __disable_irq();
+
+    if(curr_task->id == 1)
+    {
+        UART_Print("Task 1\r\n");
+    }
+    else if(curr_task->id == 2)
+    {
+        UART_Print("Task 2\r\n");
+    }
+    else
+    {
+        UART_Print("Task 3\r\n");
+    }
 
     // TODO: Handle expired task
 
