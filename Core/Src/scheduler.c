@@ -113,12 +113,12 @@ void remove_task_from_ready_queue(tcb_t *task)
         current->next = NULL;
     }
 
-    update_next_task();
 }
 
 /**
- * @brief Called when adding a task, removing a task, or scheduling.
- *        Used for telling the PendSV handler the next task to run. 
+ * @details Called when adding a task, removing a task, or scheduling.
+ *          Use this before removing a task in scheduler.
+ *          Used for telling the PendSV handler the next task to run. 
  */
 void update_next_task(void) 
 {
@@ -140,6 +140,7 @@ tcb_t* get_current_task(void)
 
 void scheduler(void) 
 {
+
     __disable_irq();
 
     // TODO: Handle expired task
@@ -161,16 +162,14 @@ void scheduler(void)
                 insert_task_in_ready_queue(curr_task);
             }
 
+            update_next_task();
             remove_task_from_ready_queue(next_ready_task);
             next_ready_task->state = TASK_RUNNING;
-
-            update_next_task();
 
             // trigger PendSV to handle the context switch
             SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 
-            curr_task = next_ready_task;
-
+            // curr_task will be updated in PendSV_Handler
         }
 
     }
@@ -182,19 +181,23 @@ __attribute((naked)) void PendSV_Handler(void)
 {
     __asm volatile 
     (
-        // save the context of the current task 
+        // Save the context of the current task
         "     mrs r0, psp                     \n" // get current PSP
         "     isb                             \n"
-        "     ldr r1, =curr_task              \n" // load address of curr_task into r1
-        "     ldr r2, [r1]                    \n" // load pointer to curr_task's TCB
+        "     ldr r1, =curr_task              \n" // load address of the pointer curr_task into r1
+        "     ldr r2, [r1]                    \n" // load TCB pointed to by curr_task, into r2
         "     stmdb r0!, {r4-r11}             \n" // store r4 - r11 on process stack
-        "     str r0, [r2]                    \n" // Set curr_task->stack_top to PSP
+        "     str r0, [r2]                    \n" // Save new stack top
 
-        // restore the context of the next task
-        "     ldr r0, =next_task              \n" // next task was updated before handler called
-        "     ldr r2, [r0]                    \n" // load pointer to next_ready_task's TCB
-        "     ldmia r2!, {r4-r11}             \n" // restore r4-r11 from next_ready_task's stack
-        "     msr psp, r2                     \n" // update PSP with next_ready_task->stack_top
-        "     bx lr                           \n"
+        // Update curr_task to next_task
+        "     ldr r0, =next_task              \n" // load address of next_task into r0
+        "     ldr r2, [r0]                    \n" // load pointer to next_task's TCB
+        "     str r2, [r1]                    \n" // update curr_task to point to next_task
+
+        // Restore the context of the next task
+        "     ldr r0, [r2]                    \n" // get the (new) curr_task's stack_top
+        "     ldmia r0!, {r4-r11}             \n" // restore r4-r11 from stack
+        "     msr psp, r0                     \n" // update PSP with stack_top
+        "     bx lr                           \n" // return to the next task
     );
 }

@@ -19,7 +19,7 @@ INC_DIRS = \
     Drivers/CMSIS/Include
 
 # Define compiler flags
-CFLAGS = -mcpu=cortex-m4 -mthumb -nostdlib $(addprefix -I, $(INC_DIRS)) -DSTM32F446xx -g
+CFLAGS = -mcpu=cortex-m4 -mthumb -nostdlib $(addprefix -I, $(INC_DIRS)) -DSTM32F446xx -g -mfloat-abi=soft
 
 # Source file directories
 CORE_SRC_DIR = Core/Src

@@ -8,7 +8,12 @@ static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters
 void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t deadline, uint32_t *stack, uint32_t stack_size)
 {
     *task = (tcb_t *) malloc(sizeof(tcb_t));
-    (*task)->stack_top = stack + stack_size - 1;
+    
+    uint32_t *stack_top = stack + stack_size - 1;
+    stack_top = (uint32_t *)((uint32_t)stack_top & ~0x7); // Ensure 8-byte alignment
+
+    (*task)->stack_top = stack_top;
+
     (*task)->stack_bottom = stack;
     (*task)->task_func = task_func;
     (*task)->deadline = deadline;
@@ -32,11 +37,15 @@ static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters
     memset(stack, 0, stack_size * sizeof(uint32_t));
 
     uint32_t *stack_ptr = stack + stack_size - 1;
-    *(--stack_ptr) = (1U << 24);           // xPSR (set bit 24 (T-bit) for thumb)
-    *(--stack_ptr) = (uint32_t)task_func;  // PC (task function address)
-    *(--stack_ptr) = 0xFFFFFFFD;           // LR (EXC_RETURN)
+    stack_ptr = (uint32_t *)((uint32_t)stack_ptr & ~0x7); // Ensure 8-byte alignment
+    *stack_ptr = (1U << 24);           // xPSR (set bit 24 (T-bit) for thumb)
+    stack_ptr--;
+    *stack_ptr = ((uint32_t)task_func) & 0xFFFFFFFE;  // PC (task function address)
+    stack_ptr--;
+    *stack_ptr = 0xFFFFFFFD;           // LR (EXC_RETURN)
     stack_ptr -= 5;                        // R12, R3, R2, R1
-    *(--stack_ptr) = (uint32_t)parameters; // R0
+    *stack_ptr = (uint32_t)parameters; // R0
+
     stack_ptr -= 8;                        // R11, R10, R9, R8, R7, R6, R5 and R4.
 
     task->stack_top = stack_ptr; 

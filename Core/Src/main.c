@@ -38,6 +38,8 @@
 
 #define STACK_SIZE 100
 
+#define FPCCR (*(volatile uint32_t *)0xE000EF34)
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,15 +66,18 @@ static void UART_Print(const char *str);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+#pragma align 4
 void task1_func(void *parameters)
 {
   while(1)
   {
     UART_Print("task1\r\n");
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
     update_task_deadline(HAL_GetTick() + 1);
   }
 }
 
+#pragma align 4
 void task2_func(void *parameters)
 {
   while(1)
@@ -80,6 +85,13 @@ void task2_func(void *parameters)
     UART_Print("task2\r\n");
     update_task_deadline(HAL_GetTick() + 5);
   }
+}
+
+void disable_fpu(void) 
+{
+    uint32_t fpccr = FPCCR;
+    fpccr &= ~((1U << 31) | (1U << 30));  // Clear ASPEN and LSPEN
+    FPCCR = fpccr;
 }
 
 /* USER CODE END 0 */
@@ -114,6 +126,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  UART_Print("starting\n");
 
   tcb_t *task1;
   tcb_t *task2;
