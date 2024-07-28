@@ -153,9 +153,13 @@ void scheduler(void)
     {
         UART_Print("Task 2\r\n");
     }
-    else
+    else if(curr_task->id == 3)
     {
         UART_Print("Task 3\r\n");
+    }
+    else
+    {
+        UART_Print("Task 4\r\n");
     }
 
     // TODO: Handle expired task

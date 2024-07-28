@@ -96,6 +96,15 @@ void task3_func(void *parameters)
   }
 }
 
+#pragma align 4
+void task4_func(void *parameters)
+{
+  while(1)
+  {
+    update_task_deadline(HAL_GetTick() + 4);
+  }
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -133,14 +142,17 @@ int main(void)
   tcb_t *task1;
   tcb_t *task2;
   tcb_t *task3;
+  tcb_t *task4;
 
   uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task4_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
   create_task(&task1, task1_func, NULL, HAL_GetTick() + 1, task1_stack, STACK_SIZE, 1);
-  create_task(&task2, task2_func, NULL, HAL_GetTick() + 2, task2_stack, STACK_SIZE, 2);
-  create_task(&task3, task3_func, NULL, HAL_GetTick() + 3, task3_stack, STACK_SIZE, 3);
+  create_task(&task2, task2_func, NULL, HAL_GetTick() + 1, task2_stack, STACK_SIZE, 2);
+  create_task(&task3, task3_func, NULL, HAL_GetTick() + 1, task3_stack, STACK_SIZE, 3);
+  create_task(&task4, task4_func, NULL, HAL_GetTick() + 1, task4_stack, STACK_SIZE, 4);
 
   scheduler_init(task1);
 
