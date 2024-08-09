@@ -8,7 +8,6 @@
 #define MAX_TASKS 10
 
 static ready_node_t *ready_queue_head;
-static ready_node_t *ready_queue_tail;
 static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task;
 static tcb_t *next_task;
@@ -53,35 +52,72 @@ void add_task(tcb_t *task)
 
 }
 
+void suspend_task(tcb_t *task)
+{
+    __disable_irq();
+    task->state = TASK_SUSPENDED;
+    if(task != curr_task)
+    {
+        remove_task_from_ready_queue(task);
+    }
+    __enable_irq();
+    scheduler();
+}
+
+void resume_task(tcb_t *task) {
+    __disable_irq();
+    if(task->state == TASK_SUSPENDED)
+    {
+        task->state = TASK_READY;
+        insert_task_in_ready_queue(task);
+    }
+    __enable_irq();
+    scheduler();
+}
+
+tcb_t * get_task_by_id(int i)
+{
+    for(int i = 0; i < num_tasks; i++)
+    {
+        if(tasks[i]->id = i)
+        {
+            return tasks[i];
+        }
+    }
+    return NULL;
+}
+
 void insert_task_in_ready_queue(tcb_t *task) 
 {
     ready_node_t *prev = NULL;
     ready_node_t *current = ready_queue_head;
 
+    // Traverse the list to find the correct position based on task deadline
     while (current != NULL && current->task->deadline <= task->deadline) 
     {
         prev = current;
         current = current->next;
     }
 
-    ready_node_t * task_node = (struct ready_node_t*) malloc(sizeof(ready_node_t));
+    // Allocate memory for the new node
+    ready_node_t *task_node = (ready_node_t*) malloc(sizeof(ready_node_t));
+    if (task_node == NULL) 
+    {
+        // Handle memory allocation failure
+        return;
+    }
     task_node->task = task;
+    task_node->next = current; // The new node points to the current node
 
     if (prev == NULL) 
     {
-
-        task_node->next = ready_queue_head;
+        // Insert at the head of the queue
         ready_queue_head = task_node;
     } 
     else 
     {
-        task_node->next = prev->next;
+        // Insert in between or at the end
         prev->next = task_node;
-    }
-
-    if (task_node->next == NULL) 
-    {
-        ready_queue_tail = task_node;
     }
 
     update_next_task();
@@ -92,6 +128,7 @@ void remove_task_from_ready_queue(tcb_t *task)
     ready_node_t *prev = NULL;
     ready_node_t *current = ready_queue_head;
 
+    // Traverse the list to find the task to remove
     while (current != NULL && current->task != task) 
     {
         prev = current;
@@ -100,22 +137,24 @@ void remove_task_from_ready_queue(tcb_t *task)
 
     if (current != NULL) 
     {
+        // Task found, now remove it from the list
         if (prev == NULL) 
         {
+            // Task is at the head of the queue
             ready_queue_head = current->next;
         } 
         else 
         {
+            // Task is in the middle or end
             prev->next = current->next;
         }
 
-        if (current->next == NULL) 
-        {
-            ready_queue_tail = prev;
-        }
+        // Clear the next pointer of the removed node
         current->next = NULL;
-    }
 
+        // Optionally free the node if it was dynamically allocated
+        // free(current);
+    }
 }
 
 /**
@@ -124,7 +163,7 @@ void remove_task_from_ready_queue(tcb_t *task)
  */
 static void update_next_task(void) 
 {
-    if(ready_queue_head->task->deadline <= curr_task->deadline)
+    if(ready_queue_head && ready_queue_head->task->deadline <= curr_task->deadline)
     {
         next_task = ready_queue_head->task;  
     }
@@ -145,6 +184,12 @@ void scheduler(void)
 
     __disable_irq();
 
+    if(curr_task == NULL)
+    {
+        __enable_irq();
+        return;
+    }
+
     if(curr_task->id == 1)
     {
         UART_Print("Task 1\r\n");
@@ -162,6 +207,11 @@ void scheduler(void)
         UART_Print("Task 4\r\n");
     }
 
+    if (ready_queue_head == NULL) 
+    {
+        __enable_irq();
+        return; // No other task to schedule
+    }
     // TODO: Handle expired task
 
     tcb_t * next_ready_task = ready_queue_head->task;

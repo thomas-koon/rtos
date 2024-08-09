@@ -210,6 +210,7 @@ __weak void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 
+  UART_Print("hi im systicking\n");
   /* USER CODE BEGIN SysTick_IRQn 0 */
   scheduler();
 
