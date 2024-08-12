@@ -69,41 +69,52 @@ void UART_Print(const char *str);
 #pragma align 4
 void task1_func(void *parameters)
 {
-  while(1)
-  {
-    //UART_Print("task1\r\n");
-    //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-    update_task_deadline(HAL_GetTick() + 1);
-  }
+    while(1)
+    {
+        UART_Print("1\r\n");
+        // After printing, Task 1 resumes Task 3 and suspends itself.
+        resume_task(get_task_by_id(3));
+        suspend_task(get_task_by_id(1));
+    }
 }
 
 #pragma align 4
 void task2_func(void *parameters)
 {
-  while(1)
-  {
-    //UART_Print("task2\r\n");
-    update_task_deadline(HAL_GetTick() + 2);
-  }
+    while(1)
+    {
+        UART_Print("2\r\n");
+        // After printing, Task 2 resumes Task 1 and suspends itself.
+        resume_task(get_task_by_id(1));
+        suspend_task(get_task_by_id(2));
+    }
 }
 
 #pragma align 4
 void task3_func(void *parameters)
 {
-  while(1)
-  {
-    update_task_deadline(HAL_GetTick() + 3);
-  }
+    while(1)
+    {
+        UART_Print("3\r\n");
+        // After printing, Task 3 resumes Task 4 and suspends itself.
+        resume_task(get_task_by_id(4));
+        suspend_task(get_task_by_id(3));
+    }
 }
 
 #pragma align 4
 void task4_func(void *parameters)
 {
-  while(1)
-  {
-    update_task_deadline(HAL_GetTick() + 4);
-  }
+    while(1)
+    {
+        UART_Print("4\r\n");
+        // After printing, Task 4 resumes Task 2 and suspends itself.
+        resume_task(get_task_by_id(2));
+        suspend_task(get_task_by_id(4));
+    }
 }
+
+
 
 /* USER CODE END 0 */
 
@@ -117,6 +128,7 @@ int main(void)
 
   /* USER CODE END 1 */
 
+  __disable_irq();
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -141,20 +153,20 @@ int main(void)
 
   tcb_t *task1;
   tcb_t *task2;
-  // tcb_t *task3;
-  // tcb_t *task4;
+  tcb_t *task3;
+  tcb_t *task4;
 
   uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  // uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  // uint32_t *task4_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task4_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
-  create_task(&task1, task1_func, NULL, HAL_GetTick() + 1, task1_stack, STACK_SIZE, 1);
-  //create_task(&task2, task2_func, NULL, HAL_GetTick() + 1, task2_stack, STACK_SIZE, 2);
-  // create_task(&task3, task3_func, NULL, HAL_GetTick() + 1, task3_stack, STACK_SIZE, 3);
-  // create_task(&task4, task4_func, NULL, HAL_GetTick() + 1, task4_stack, STACK_SIZE, 4);
+  create_task(&task1, task1_func, NULL, 2, task1_stack, STACK_SIZE, 1);
+  create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
+  create_task(&task3, task3_func, NULL, 1, task3_stack, STACK_SIZE, 3);
+  create_task(&task4, task4_func, NULL, 4, task4_stack, STACK_SIZE, 4);
 
-  scheduler_init(task1);
+  switch_task_init(task4);
 
   /* USER CODE END 2 */
 

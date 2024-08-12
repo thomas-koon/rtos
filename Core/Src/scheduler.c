@@ -1,42 +1,35 @@
+#include "main.h"
 #include "scheduler.h"
 #include "stm32f4xx.h"  
 #include "stm32f4xx_it.h"
 #include <stddef.h>
 #include <stdlib.h>
-#include "main.h"
+#include <stdio.h>
 
 #define MAX_TASKS 10
+#define MAX_SYSCALL_INTERRUPT_PRIORITY (5 << 4)
 
 static ready_node_t *ready_queue_head;
 static tcb_t *tasks[MAX_TASKS];
-static tcb_t *curr_task;
-static tcb_t *next_task;
+static tcb_t *curr_task; 
 static uint32_t num_tasks = 0;
 
-static void update_next_task(void);
-
-void scheduler_init(tcb_t * first_task) 
+void switch_task_init(tcb_t * first_task) 
 {
     remove_task_from_ready_queue(first_task);
     curr_task = first_task;
     curr_task->state = TASK_RUNNING;
 
-    update_next_task();
+    NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+    NVIC_SetPriority(SysTick_IRQn, 0x0F);
+    NVIC_SetPriority(PendSV_IRQn, 0x0F);
 
-    __set_PSP((uint32_t)first_task->stack_top);
-    __set_CONTROL(0x02);
-    __ISB();
+    __enable_irq();
 
     // Use inline assembly to branch to the task function
     asm volatile 
     (
-        "ldr r0, [%1]       \n" // Load the value of first_task->parameters into R0 (first parameter)
-        "ldr r1, [%0]       \n" // Load the value of first_task->task_func into R1 (function pointer)
-        "mov lr, #0xFFFFFFFD\n" // Set the Link Register (LR) to the EXC_RETURN value for thread mode, using PSP
-        "bx r1              \n" // Branch to the address in R1 (task function)
-        : 
-        : "r"(&first_task->task_func), "r"(&first_task->parameters) // Input operands
-        : "r0", "r1" // Clobbered registers
+        "svc 0"
     );
 }
 
@@ -61,7 +54,7 @@ void suspend_task(tcb_t *task)
         remove_task_from_ready_queue(task);
     }
     __enable_irq();
-    scheduler();
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
 void resume_task(tcb_t *task) {
@@ -72,14 +65,14 @@ void resume_task(tcb_t *task) {
         insert_task_in_ready_queue(task);
     }
     __enable_irq();
-    scheduler();
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-tcb_t * get_task_by_id(int i)
+tcb_t * get_task_by_id(int id)
 {
     for(int i = 0; i < num_tasks; i++)
     {
-        if(tasks[i]->id = i)
+        if(tasks[i]->id == id)
         {
             return tasks[i];
         }
@@ -92,8 +85,8 @@ void insert_task_in_ready_queue(tcb_t *task)
     ready_node_t *prev = NULL;
     ready_node_t *current = ready_queue_head;
 
-    // Traverse the list to find the correct position based on task deadline
-    while (current != NULL && current->task->deadline <= task->deadline) 
+    // Traverse the list to find the correct position based on task priority
+    while (current != NULL && current->task->priority >= task->priority) 
     {
         prev = current;
         current = current->next;
@@ -120,7 +113,6 @@ void insert_task_in_ready_queue(tcb_t *task)
         prev->next = task_node;
     }
 
-    update_next_task();
 }
 
 void remove_task_from_ready_queue(tcb_t *task) 
@@ -157,93 +149,72 @@ void remove_task_from_ready_queue(tcb_t *task)
     }
 }
 
-/**
- * @details Get the next task to run, either the current or the ready head.
- *          Used for telling the PendSV handler the next task to run. 
- */
-static void update_next_task(void) 
-{
-    if(ready_queue_head && ready_queue_head->task->deadline <= curr_task->deadline)
-    {
-        next_task = ready_queue_head->task;  
-    }
-    else
-    {
-        next_task = curr_task;    
-    }
-   
-}
-
 tcb_t* get_current_task(void)
 {
     return curr_task;
 }
 
-void scheduler(void) 
+void switch_task(void) 
 {
 
-    __disable_irq();
-
-    if(curr_task == NULL)
+    if (curr_task == NULL) 
     {
-        __enable_irq();
         return;
     }
 
-    if(curr_task->id == 1)
+    // Print current task info
+    char buffer[100];
+
+    // Print ready queue info
+    ready_node_t *node = ready_queue_head;
+    while (node != NULL) 
     {
-        UART_Print("Task 1\r\n");
-    }
-    else if(curr_task->id == 2)
-    {
-        UART_Print("Task 2\r\n");
-    }
-    else if(curr_task->id == 3)
-    {
-        UART_Print("Task 3\r\n");
-    }
-    else
-    {
-        UART_Print("Task 4\r\n");
+        node = node->next;
     }
 
     if (ready_queue_head == NULL) 
     {
-        __enable_irq();
         return; // No other task to schedule
     }
-    // TODO: Handle expired task
 
-    tcb_t * next_ready_task = ready_queue_head->task;
+    tcb_t *next_ready_task = ready_queue_head->task;
 
-    // if task in ready queue
-    if (next_ready_task != NULL && next_ready_task->state == TASK_READY)
+    if (next_ready_task != NULL && next_ready_task->state == TASK_READY) 
     {
-
-        // if ready task has earlier deadline than current task
-        if (curr_task == NULL || next_ready_task->deadline <= curr_task->deadline)
+        // If ready task has a higher or equal priority than current task, or current task suspended
+        if (curr_task == NULL || next_ready_task->priority >= curr_task->priority || curr_task->state == TASK_SUSPENDED) 
         {
-            
-            // queue the current task
+
+            remove_task_from_ready_queue(next_ready_task);
+
+            // Queue the current task
             if (curr_task != NULL && curr_task->state == TASK_RUNNING) 
             {
                 curr_task->state = TASK_READY;
                 insert_task_in_ready_queue(curr_task);
             }
 
-            update_next_task();
-            remove_task_from_ready_queue(next_ready_task);
             next_ready_task->state = TASK_RUNNING;
 
-            // trigger PendSV to handle the context switch
-            SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+            curr_task = next_ready_task;
+        } 
+    } 
+    
+}
 
-            // curr_task will be updated in PendSV_Handler
-        }
-
-    }
-
-    __enable_irq();
+__attribute((naked)) void SVC_Handler(void)
+{
+    __asm volatile
+    (
+        "    ldr r3, =curr_task       \n" // Get the location of the current TCB
+        "    ldr r1, [r3]                \n" // Load the TCB
+        "    ldr r0, [r1]                \n" // Load the stack pointer from TCB
+        "    ldmia r0!, {r4-r11, r14}   \n" // Restore the core registers
+        "    msr psp, r0                 \n" // Update the PSP
+        "    isb                         \n" // Ensure the update is complete
+        "    bx r14                      \n" // Branch to the task function
+        "    .align 4                    \n"
+    );
 }
 
 __attribute((naked)) void PendSV_Handler(void)
@@ -253,20 +224,33 @@ __attribute((naked)) void PendSV_Handler(void)
         // Save the context of the current task
         "     mrs r0, psp                     \n" // get current PSP
         "     isb                             \n"
-        "     ldr r1, =curr_task              \n" // load address of the pointer curr_task into r1
-        "     ldr r2, [r1]                    \n" // load TCB pointed to by curr_task, into r2
-        "     stmdb r0!, {r4-r11}             \n" // store r4 - r11 on process stack
+        "     ldr r3, =curr_task              \n" // load address of the pointer curr_task into r1
+        "     ldr r2, [r3]                    \n" // load TCB pointed to by curr_task, into r2
+        "     stmdb r0!, {r4-r11, r14}         \n" // store r4 - r11 on process stack
         "     str r0, [r2]                    \n" // Save new stack top
 
-        // Update curr_task to next_task
-        "     ldr r0, =next_task              \n" // load address of next_task into r0
-        "     ldr r2, [r0]                    \n" // load pointer to next_task's TCB
-        "     str r2, [r1]                    \n" // update curr_task to point to next_task
+        "     stmdb sp!, {r0, r3}             \n"
+        "     mov r0, %0                      \n"
+        "     msr basepri, r0                 \n"
+        "     dsb                             \n"
+        "     isb                             \n"
+        "     bl switch_task                    \n"
 
-        // Restore the context of the next task
-        "     ldr r0, [r2]                    \n" // get the (new) curr_task's stack_top
-        "     ldmia r0!, {r4-r11}             \n" // restore r4-r11 from stack
+        "     mov r0, #0                      \n"
+        "     msr basepri, r0                 \n"
+        "     ldmia sp!, {r0, r3}             \n"
+
+        "     ldr r1, [r3]                    \n"
+        "     ldr r0, [r1]                    \n" // get the (new) curr_task's stack_top
+
+        "     ldmia r0!, {r4-r11, r14}        \n" // restore r4-r11 from stack
+
         "     msr psp, r0                     \n" // update PSP with stack_top
-        "     bx lr                           \n" // return to the next task
+        "     isb                             \n"
+
+        "     bx r14                          \n" // return to the next task
+        
+        "     .align 4                        \n"
+        ::"i"(MAX_SYSCALL_INTERRUPT_PRIORITY)
     );
 }

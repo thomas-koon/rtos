@@ -168,7 +168,7 @@ void UsageFault_Handler(void)
 /**
   * @brief This function handles System service call via SWI instruction.
   */
-void SVC_Handler(void)
+__weak void SVC_Handler(void)
 {
   /* USER CODE BEGIN SVCall_IRQn 0 */
 
@@ -210,15 +210,13 @@ __weak void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 
-  UART_Print("hi im systicking\n");
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-  scheduler();
+  __disable_irq();
 
-  /* USER CODE END SysTick_IRQn 0 */
+  SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
+
   HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
 
-  /* USER CODE END SysTick_IRQn 1 */
+  __enable_irq();
 }
 
 /******************************************************************************/

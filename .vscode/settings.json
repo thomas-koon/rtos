@@ -6,7 +6,7 @@
         "stm32f446xx.h": "c",
         "stm32f4xx_hal_conf.h": "c",
         "main.h": "c",
-        "scheduler.h": "c",
+        "switch_task.h": "c",
         "task.h": "c",
         "cstdint": "c"
     }

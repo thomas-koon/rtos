@@ -4,9 +4,10 @@ target remote localhost:3333
 # Load the ELF file
 file rtos.elf
 
-break main.c:76
-break main.c:86
-break main.c:96
+#break main.c:85
+break *0x8000aa2
+condition 1 curr_task->id == 1
+
 
 # Reset and halt the target
 monitor reset halt

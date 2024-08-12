@@ -7,10 +7,10 @@
 
 static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
 
-void sem_init(sem_t * sem, int init_count, int deadline_floor)
+void sem_init(sem_t * sem, int init_count, int priority_floor)
 {
     sem->count = init_count;
-    sem->deadline_floor = deadline_floor;
+    sem->priority_floor = priority_floor;
     sem->waiting_head = NULL;
     sem->waiting_tail = NULL;
 }
@@ -21,7 +21,7 @@ void sem_post(sem_t * sem)
     __disable_irq();
 
     tcb_t * curr_task = get_current_task();
-    curr_task->deadline = curr_task->og_deadline;
+    curr_task->priority = curr_task->og_priority;
     
     if(sem->waiting_head == NULL) 
     {
@@ -46,7 +46,7 @@ void sem_post(sem_t * sem)
         insert_task_in_ready_queue(task);
 
         __enable_irq();
-        scheduler();
+        switch_task();
     }
 
     
@@ -60,11 +60,11 @@ void sem_wait(sem_t * sem)
 
     tcb_t * curr_task = get_current_task();
 
-    uint32_t new_deadline = HAL_GetTick() + sem->deadline_floor;
+    uint32_t new_priority = HAL_GetTick() + sem->priority_floor;
 
-    if (new_deadline < curr_task->deadline) 
+    if (new_priority < curr_task->priority) 
     {
-        curr_task->deadline = new_deadline;  
+        curr_task->priority = new_priority;  
     }
 
     // if the resource is available
@@ -93,7 +93,7 @@ void sem_wait(sem_t * sem)
 
     __enable_irq();
 
-    scheduler();
+    switch_task();
 
 }
 
@@ -101,7 +101,7 @@ static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node) {
     sem_ll_node_t* prev = NULL;
     sem_ll_node_t* current = sem->waiting_head;
 
-    while (current != NULL && current->task->deadline < new_node->task->deadline) 
+    while (current != NULL && current->task->priority < new_node->task->priority) 
     {
         prev = current;
         current = current->next;
