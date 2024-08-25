@@ -8,6 +8,8 @@
         "main.h": "c",
         "switch_task.h": "c",
         "task.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "semaphore.h": "c",
+        "scheduler.h": "c"
     }
 }

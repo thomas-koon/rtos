@@ -12,6 +12,7 @@ typedef struct sem_ll_node_t
 typedef struct 
 {
     int count;
+    int max_count;
     sem_ll_node_t * waiting_head;
     sem_ll_node_t * waiting_tail;
 } sem_t;

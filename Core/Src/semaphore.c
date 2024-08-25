@@ -1,15 +1,19 @@
 #include "semaphore.h"
 #include "scheduler.h"
-#include <stddef.h>
-#include <stdlib.h>
+#include "main.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
 
 void sem_init(sem_t * sem, int init_count)
 {
     sem->count = init_count;
+    sem->max_count = init_count;
     sem->waiting_head = NULL;
     sem->waiting_tail = NULL;
 }
@@ -17,14 +21,15 @@ void sem_init(sem_t * sem, int init_count)
 void sem_post(sem_t * sem) 
 {
 
-    __disable_irq();
+    enter_critical();
 
     tcb_t * curr_task = get_current_task();
     
-    if(sem->waiting_head == NULL) 
+    if(sem->waiting_head == NULL && sem->count < sem->max_count) 
     {
         sem->count++; // if no tasks waiting, resource available
-        __enable_irq();
+        exit_critical();
+        return;
     }
     else
     {
@@ -43,8 +48,8 @@ void sem_post(sem_t * sem)
         task->state = TASK_READY;
         insert_task_in_ready_queue(task);
 
-        __enable_irq();
-        switch_task();
+        exit_critical();
+        pend_yield();
     }
 
 }
@@ -52,7 +57,7 @@ void sem_post(sem_t * sem)
 void sem_wait(sem_t * sem)
 {
 
-    __disable_irq();
+    enter_critical();
 
     tcb_t * curr_task = get_current_task();
 
@@ -60,7 +65,7 @@ void sem_wait(sem_t * sem)
     if (sem->count > 0) 
     {
         sem->count--; 
-        __enable_irq();
+        exit_critical();
         return;
     }
     
@@ -69,7 +74,7 @@ void sem_wait(sem_t * sem)
     
     if(new_node == NULL)
     {
-        __enable_irq();
+        exit_critical();
         return;
     }
 
@@ -80,9 +85,9 @@ void sem_wait(sem_t * sem)
 
     curr_task->state = TASK_BLOCKED;
 
-    __enable_irq();
+    exit_critical();
 
-    switch_task();
+    pend_yield();
 
 }
 
@@ -90,7 +95,7 @@ static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node) {
     sem_ll_node_t* prev = NULL;
     sem_ll_node_t* current = sem->waiting_head;
 
-    while (current != NULL && current->task->priority < new_node->task->priority) 
+    while (current != NULL && current->task->priority >= new_node->task->priority) 
     {
         prev = current;
         current = current->next;

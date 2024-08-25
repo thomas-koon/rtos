@@ -34,25 +34,35 @@ static void MX_USART2_UART_Init(void);
 void UART_Print(const char *str);
 
 sem_t *sem;
+volatile int shared_counter = 0;
 
-#pragma align 4
+// Task 1: Increment shared_counter
 void task1_func(void *parameters) 
 {
-  //sem_wait(sem);
   while (1) 
   {
-    UART_Print("1");
-
+    sem_wait(sem); 
+    shared_counter++; // Critical section: Increment counter
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "Task 1 incremented counter: %d\n\r", shared_counter);
+    UART_Print(buffer);
+    sem_post(sem);
+    for (volatile int i = 0; i < 100000; i++);
   }
 }
 
-
-#pragma align 4
+// Task 2: Decrement shared_counter
 void task2_func(void *parameters) 
 {
   while (1) 
   {
-    UART_Print("2");
+    sem_wait(sem);
+    shared_counter--; // Critical section: Decrement counter
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "Task 2 decremented counter: %d\n\r", shared_counter);
+    UART_Print(buffer);
+    sem_post(sem); 
+    for (volatile int i = 0; i < 100000; i++);
   }
 }
 
@@ -100,9 +110,11 @@ int main(void)
 
   create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 1);
-  sem_init(sem, 0);
 
-  scheduler_init(task2);
+  sem = (sem_t *)malloc(sizeof(sem_t));
+  sem_init(sem, 1);
+
+  scheduler_init(task1);
 
   /* USER CODE END 2 */
 
@@ -199,9 +211,9 @@ static void MX_USART2_UART_Init(void)
 
 void UART_Print(const char *str)
 {
-  __disable_irq();
+  enter_critical();
   HAL_UART_Transmit(&huart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
-  __enable_irq();
+  exit_critical();
 }
 
 void toggle_led()

@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 #define MAX_TASKS 10
-#define MAX_SYSCALL_INTERRUPT_PRIORITY (15 << 4)
 #define MASK_PRIORITY        (0x06<<4)
 
 static ready_node_t *ready_queue_head;
@@ -197,13 +196,13 @@ void unmask_irq(void)
     );
 }
 
-void rt_enter_critical(void)
+void enter_critical(void)
 {
   mask_irq();
   ++nested_critical;
 }
 
-void rt_exit_critical(void)
+void exit_critical(void)
 {
   if(--nested_critical == 0)
     unmask_irq();
@@ -230,8 +229,8 @@ void switch_task(void)
 
     if (next_ready_task != NULL && next_ready_task->state == TASK_READY) 
     {
-        // If ready task has a higher or equal priority than current task, or current task suspended
-        if (curr_task == NULL || next_ready_task->priority >= curr_task->priority || curr_task->state == TASK_SUSPENDED) 
+        // If ready task has a higher or equal priority than current task, or current task suspended or blocked
+        if (curr_task == NULL || next_ready_task->priority >= curr_task->priority || curr_task->state == TASK_SUSPENDED || curr_task->state == TASK_BLOCKED) 
         {
 
             remove_task_from_ready_queue(next_ready_task);
