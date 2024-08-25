@@ -7,10 +7,9 @@
 
 static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
 
-void sem_init(sem_t * sem, int init_count, int priority_floor)
+void sem_init(sem_t * sem, int init_count)
 {
     sem->count = init_count;
-    sem->priority_floor = priority_floor;
     sem->waiting_head = NULL;
     sem->waiting_tail = NULL;
 }
@@ -21,7 +20,6 @@ void sem_post(sem_t * sem)
     __disable_irq();
 
     tcb_t * curr_task = get_current_task();
-    curr_task->priority = curr_task->og_priority;
     
     if(sem->waiting_head == NULL) 
     {
@@ -49,8 +47,6 @@ void sem_post(sem_t * sem)
         switch_task();
     }
 
-    
-
 }
 
 void sem_wait(sem_t * sem)
@@ -60,14 +56,7 @@ void sem_wait(sem_t * sem)
 
     tcb_t * curr_task = get_current_task();
 
-    uint32_t new_priority = HAL_GetTick() + sem->priority_floor;
-
-    if (new_priority < curr_task->priority) 
-    {
-        curr_task->priority = new_priority;  
-    }
-
-    // if the resource is available
+    // if the resource is available, take it
     if (sem->count > 0) 
     {
         sem->count--; 

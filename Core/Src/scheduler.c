@@ -7,22 +7,31 @@
 #include <stdio.h>
 
 #define MAX_TASKS 10
-#define MAX_SYSCALL_INTERRUPT_PRIORITY (5 << 4)
+#define MAX_SYSCALL_INTERRUPT_PRIORITY (15 << 4)
+#define MASK_PRIORITY        (0x06<<4)
 
 static ready_node_t *ready_queue_head;
 static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task; 
 static uint32_t num_tasks = 0;
+static volatile uint32_t nested_critical = 0;
 
-void switch_task_init(tcb_t * first_task) 
+void scheduler_init(tcb_t * first_task) 
 {
     remove_task_from_ready_queue(first_task);
     curr_task = first_task;
     curr_task->state = TASK_RUNNING;
 
+    // From the ARM docs:
+    // "In an RTOS environment, 
+    // PendSV is usually configured to 
+    // have the lowest interrupt priority level."
+
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     NVIC_SetPriority(SysTick_IRQn, 0x0F);
-    NVIC_SetPriority(PendSV_IRQn, 0x0F);
+    NVIC_SetPriority(PendSV_IRQn, 0xFF);
+
+    SysTick->LOAD = (16000000 / 1) - 1;
 
     __enable_irq();
 
@@ -43,6 +52,11 @@ void add_task(tcb_t *task)
         insert_task_in_ready_queue(task);
     }
 
+}
+
+void pend_yield()
+{
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
 void suspend_task(tcb_t *task)
@@ -154,26 +168,61 @@ tcb_t* get_current_task(void)
     return curr_task;
 }
 
+tcb_t* get_ready_queue_head_task(void)
+{
+    return ready_queue_head->task;
+}
+
+void mask_irq(void)
+{
+
+    // mask all numerically higher interrupts
+    uint32_t tmp = MASK_PRIORITY;
+
+    __asm volatile (
+        " msr basepri, %0  \n\t"
+        :
+        : "r" (tmp)
+    );
+}
+
+void unmask_irq(void)
+{
+    uint32_t tmp = 0;
+
+    __asm volatile (
+        " msr basepri, %0  \n\t"
+        :
+        : "r" (tmp)
+    );
+}
+
+void rt_enter_critical(void)
+{
+  mask_irq();
+  ++nested_critical;
+}
+
+void rt_exit_critical(void)
+{
+  if(--nested_critical == 0)
+    unmask_irq();
+}
+
+
 void switch_task(void) 
 {
 
+    mask_irq();
     if (curr_task == NULL) 
     {
+        unmask_irq();
         return;
-    }
-
-    // Print current task info
-    char buffer[100];
-
-    // Print ready queue info
-    ready_node_t *node = ready_queue_head;
-    while (node != NULL) 
-    {
-        node = node->next;
     }
 
     if (ready_queue_head == NULL) 
     {
+        unmask_irq();
         return; // No other task to schedule
     }
 
@@ -199,7 +248,7 @@ void switch_task(void)
             curr_task = next_ready_task;
         } 
     } 
-    
+    unmask_irq();
 }
 
 __attribute((naked)) void SVC_Handler(void)
@@ -229,15 +278,11 @@ __attribute((naked)) void PendSV_Handler(void)
         "     stmdb r0!, {r4-r11, r14}         \n" // store r4 - r11 on process stack
         "     str r0, [r2]                    \n" // Save new stack top
 
-        "     stmdb sp!, {r0, r3}             \n"
-        "     mov r0, %0                      \n"
-        "     msr basepri, r0                 \n"
+        "     stmdb sp!, {r0, r3}             \n" 
         "     dsb                             \n"
         "     isb                             \n"
-        "     bl switch_task                    \n"
 
-        "     mov r0, #0                      \n"
-        "     msr basepri, r0                 \n"
+        "     bl switch_task                    \n"
         "     ldmia sp!, {r0, r3}             \n"
 
         "     ldr r1, [r3]                    \n"
@@ -251,6 +296,5 @@ __attribute((naked)) void PendSV_Handler(void)
         "     bx r14                          \n" // return to the next task
         
         "     .align 4                        \n"
-        ::"i"(MAX_SYSCALL_INTERRUPT_PRIORITY)
     );
 }

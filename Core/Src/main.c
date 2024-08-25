@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -15,108 +14,50 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
 #include "scheduler.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#include "semaphore.h"
 #include "task.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-#define STACK_SIZE 100
-
+#define STACK_SIZE 300
 #define FPCCR (*(volatile uint32_t *)0xE000EF34)
 
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 void UART_Print(const char *str);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+sem_t *sem;
 
 #pragma align 4
-void task1_func(void *parameters)
+void task1_func(void *parameters) 
 {
-    while(1)
-    {
-        UART_Print("1\r\n");
-        // After printing, Task 1 resumes Task 3 and suspends itself.
-        resume_task(get_task_by_id(3));
-        suspend_task(get_task_by_id(1));
-    }
+  //sem_wait(sem);
+  while (1) 
+  {
+    UART_Print("1");
+
+  }
 }
 
-#pragma align 4
-void task2_func(void *parameters)
-{
-    while(1)
-    {
-        UART_Print("2\r\n");
-        // After printing, Task 2 resumes Task 1 and suspends itself.
-        resume_task(get_task_by_id(1));
-        suspend_task(get_task_by_id(2));
-    }
-}
 
 #pragma align 4
-void task3_func(void *parameters)
+void task2_func(void *parameters) 
 {
-    while(1)
-    {
-        UART_Print("3\r\n");
-        // After printing, Task 3 resumes Task 4 and suspends itself.
-        resume_task(get_task_by_id(4));
-        suspend_task(get_task_by_id(3));
-    }
-}
-
-#pragma align 4
-void task4_func(void *parameters)
-{
-    while(1)
-    {
-        UART_Print("4\r\n");
-        // After printing, Task 4 resumes Task 2 and suspends itself.
-        resume_task(get_task_by_id(2));
-        suspend_task(get_task_by_id(4));
-    }
+  while (1) 
+  {
+    UART_Print("2");
+  }
 }
 
 
 
-/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -128,6 +69,7 @@ int main(void)
 
   /* USER CODE END 1 */
 
+  //UART_Print("starting!\n");
   __disable_irq();
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -149,24 +91,18 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  UART_Print("starting\n");
 
   tcb_t *task1;
   tcb_t *task2;
-  tcb_t *task3;
-  tcb_t *task4;
 
   uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  uint32_t *task4_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
-  create_task(&task1, task1_func, NULL, 2, task1_stack, STACK_SIZE, 1);
-  create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
-  create_task(&task3, task3_func, NULL, 1, task3_stack, STACK_SIZE, 3);
-  create_task(&task4, task4_func, NULL, 4, task4_stack, STACK_SIZE, 4);
+  create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
+  create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 1);
+  sem_init(sem, 0);
 
-  switch_task_init(task4);
+  scheduler_init(task2);
 
   /* USER CODE END 2 */
 
@@ -263,7 +199,14 @@ static void MX_USART2_UART_Init(void)
 
 void UART_Print(const char *str)
 {
+  __disable_irq();
   HAL_UART_Transmit(&huart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+  __enable_irq();
+}
+
+void toggle_led()
+{
+  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 }
 
 /**
