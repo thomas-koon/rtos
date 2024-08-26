@@ -69,6 +69,7 @@ void task2_func(void *parameters)
 
 
 
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -102,6 +103,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  UART_Print("\r\n\r\n");
+
   tcb_t *task1;
   tcb_t *task2;
 
@@ -109,7 +112,7 @@ int main(void)
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
   create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
-  create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 1);
+  create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 2);
 
   sem = (sem_t *)malloc(sizeof(sem_t));
   sem_init(sem, 1);

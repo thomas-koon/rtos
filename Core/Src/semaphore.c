@@ -23,11 +23,15 @@ void sem_post(sem_t * sem)
 
     enter_critical();
 
+    char buffer[100];
+
     tcb_t * curr_task = get_current_task();
     
     if(sem->waiting_head == NULL && sem->count < sem->max_count) 
     {
         sem->count++; // if no tasks waiting, resource available
+        snprintf(buffer, 100, "Task %d released semaphore. New count: %d\r\n", curr_task->id, sem->count);
+        UART_Print(buffer);
         exit_critical();
         return;
     }
@@ -48,6 +52,9 @@ void sem_post(sem_t * sem)
         task->state = TASK_READY;
         insert_task_in_ready_queue(task);
 
+        snprintf(buffer, 100, "Task %d released semaphore. Task %d is now ready.\r\n", curr_task->id, task->id);
+        UART_Print(buffer);
+
         exit_critical();
         pend_yield();
     }
@@ -60,34 +67,46 @@ void sem_wait(sem_t * sem)
     enter_critical();
 
     tcb_t * curr_task = get_current_task();
+    char buffer[100];
 
     // if the resource is available, take it
     if (sem->count > 0) 
     {
         sem->count--; 
+
+        snprintf(buffer, 100, "Task %d acquired semaphore. New count: %d\r\n", curr_task->id, sem->count);
+        UART_Print(buffer);
+
         exit_critical();
         return;
     }
-    
-    // resource not available: wait on the semaphore queue
-    sem_ll_node_t * new_node = (sem_ll_node_t *) malloc(sizeof(sem_ll_node_t));
-    
-    if(new_node == NULL)
+    else
     {
+    
+        // resource not available: wait on the semaphore queue
+        sem_ll_node_t * new_node = (sem_ll_node_t *) malloc(sizeof(sem_ll_node_t));
+        
+        if(new_node == NULL)
+        {
+            exit_critical();
+            return;
+        }
+
+        new_node->task = curr_task;
+        new_node->next = NULL;
+
+        sem_queue_task(sem, new_node);
+
+        curr_task->state = TASK_BLOCKED;
+
+        snprintf(buffer, 100, "Task %d is blocked and added to semaphore queue.\r\n", curr_task->id);
+        UART_Print(buffer);
+
         exit_critical();
-        return;
+
+        pend_yield();
+        
     }
-
-    new_node->task = curr_task;
-    new_node->next = NULL;
-
-    sem_queue_task(sem, new_node);
-
-    curr_task->state = TASK_BLOCKED;
-
-    exit_critical();
-
-    pend_yield();
 
 }
 

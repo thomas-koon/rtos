@@ -27,7 +27,7 @@ void scheduler_init(tcb_t * first_task)
     // have the lowest interrupt priority level."
 
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-    NVIC_SetPriority(SysTick_IRQn, 0x0F);
+    NVIC_SetPriority(SysTick_IRQn, 0xFF);
     NVIC_SetPriority(PendSV_IRQn, 0xFF);
 
     SysTick->LOAD = (16000000 / 1) - 1;
@@ -198,14 +198,16 @@ void unmask_irq(void)
 
 void enter_critical(void)
 {
-  mask_irq();
-  ++nested_critical;
+    mask_irq();
+    ++nested_critical;
+
 }
 
 void exit_critical(void)
 {
-  if(--nested_critical == 0)
-    unmask_irq();
+    if(--nested_critical == 0)
+        unmask_irq();
+
 }
 
 
