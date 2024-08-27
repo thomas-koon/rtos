@@ -16,7 +16,7 @@
   */
 
 #include "main.h"
-#include "scheduler.h"
+#include "kernel.h"
 #include "semaphore.h"
 #include "task.h"
 #include <stdlib.h>
@@ -114,8 +114,7 @@ int main(void)
   create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 2);
 
-  sem = (sem_t *)malloc(sizeof(sem_t));
-  sem_init(sem, 1);
+  sem_init(&sem, 1);
 
   scheduler_init(task1);
 

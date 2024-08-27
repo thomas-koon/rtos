@@ -1,6 +1,6 @@
 #include "task.h"
 #include "main.h"
-#include "scheduler.h"
+#include "kernel.h"
 #include <string.h>
 #include <stdlib.h>
 

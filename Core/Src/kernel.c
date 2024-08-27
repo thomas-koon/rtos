@@ -1,5 +1,6 @@
 #include "main.h"
-#include "scheduler.h"
+#include "kernel.h"
+#include "list.h"
 #include "stm32f4xx.h"  
 #include "stm32f4xx_it.h"
 #include <stddef.h>
@@ -9,11 +10,13 @@
 #define MAX_TASKS 10
 #define MASK_PRIORITY        (0x06<<4)
 
-static ready_node_t *ready_queue_head;
+static task_ll_node_t *ready_queue_head;
 static tcb_t *tasks[MAX_TASKS];
 static tcb_t *curr_task; 
 static uint32_t num_tasks = 0;
 static volatile uint32_t nested_critical = 0;
+
+static void remove_task_from_ready_queue(tcb_t * task);
 
 void scheduler_init(tcb_t * first_task) 
 {
@@ -95,81 +98,17 @@ tcb_t * get_task_by_id(int id)
 
 void insert_task_in_ready_queue(tcb_t *task) 
 {
-    ready_node_t *prev = NULL;
-    ready_node_t *current = ready_queue_head;
-
-    // Traverse the list to find the correct position based on task priority
-    while (current != NULL && current->task->priority >= task->priority) 
-    {
-        prev = current;
-        current = current->next;
-    }
-
-    // Allocate memory for the new node
-    ready_node_t *task_node = (ready_node_t*) malloc(sizeof(ready_node_t));
-    if (task_node == NULL) 
-    {
-        // Handle memory allocation failure
-        return;
-    }
-    task_node->task = task;
-    task_node->next = current; // The new node points to the current node
-
-    if (prev == NULL) 
-    {
-        // Insert at the head of the queue
-        ready_queue_head = task_node;
-    } 
-    else 
-    {
-        // Insert in between or at the end
-        prev->next = task_node;
-    }
-
+    task_ll_insert(task, &(ready_queue_head));
 }
 
-void remove_task_from_ready_queue(tcb_t *task) 
+static void remove_task_from_ready_queue(tcb_t *task) 
 {
-    ready_node_t *prev = NULL;
-    ready_node_t *current = ready_queue_head;
-
-    // Traverse the list to find the task to remove
-    while (current != NULL && current->task != task) 
-    {
-        prev = current;
-        current = current->next;
-    }
-
-    if (current != NULL) 
-    {
-        // Task found, now remove it from the list
-        if (prev == NULL) 
-        {
-            // Task is at the head of the queue
-            ready_queue_head = current->next;
-        } 
-        else 
-        {
-            // Task is in the middle or end
-            prev->next = current->next;
-        }
-
-        // Clear the next pointer of the removed node
-        current->next = NULL;
-
-        // Optionally free the node if it was dynamically allocated
-        // free(current);
-    }
+    task_ll_remove(task, &(ready_queue_head));
 }
 
 tcb_t* get_current_task(void)
 {
     return curr_task;
-}
-
-tcb_t* get_ready_queue_head_task(void)
-{
-    return ready_queue_head->task;
 }
 
 void mask_irq(void)
@@ -207,7 +146,6 @@ void exit_critical(void)
 {
     if(--nested_critical == 0)
         unmask_irq();
-
 }
 
 

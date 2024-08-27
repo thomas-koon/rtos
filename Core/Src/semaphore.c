@@ -1,6 +1,7 @@
 #include "semaphore.h"
-#include "scheduler.h"
+#include "kernel.h"
 #include "main.h"
+#include "list.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 
@@ -8,15 +9,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node);
+static void sem_queue_task(sem_t* sem, tcb_t* task);
 
-void sem_init(sem_t * sem, int init_count)
+void sem_init(sem_t **sem, int init_count) 
 {
-    sem->count = init_count;
-    sem->max_count = init_count;
-    sem->waiting_head = NULL;
-    sem->waiting_tail = NULL;
+    *sem = (sem_t *)malloc(sizeof(sem_t));
+    if (*sem == NULL) 
+    {
+        return; 
+    }
+    (*sem)->count = init_count;
+    (*sem)->max_count = init_count;
+    (*sem)->waiting_head = NULL;
 }
+
 
 void sem_post(sem_t * sem) 
 {
@@ -38,14 +44,10 @@ void sem_post(sem_t * sem)
     else
     {
         // dequeue the highest priority task from the head of the linked list
-        sem_ll_node_t* head = sem->waiting_head;
+        task_ll_node_t* head = sem->waiting_head;
         tcb_t* task = head->task;
         
         sem->waiting_head = sem->waiting_head->next;
-        if (sem->waiting_head == NULL) 
-        {
-            sem->waiting_tail = NULL; // Queue becomes empty
-        }
 
         free(head); 
 
@@ -82,20 +84,7 @@ void sem_wait(sem_t * sem)
     }
     else
     {
-    
-        // resource not available: wait on the semaphore queue
-        sem_ll_node_t * new_node = (sem_ll_node_t *) malloc(sizeof(sem_ll_node_t));
-        
-        if(new_node == NULL)
-        {
-            exit_critical();
-            return;
-        }
-
-        new_node->task = curr_task;
-        new_node->next = NULL;
-
-        sem_queue_task(sem, new_node);
+        sem_queue_task(sem, curr_task);
 
         curr_task->state = TASK_BLOCKED;
 
@@ -110,29 +99,6 @@ void sem_wait(sem_t * sem)
 
 }
 
-static void sem_queue_task(sem_t* sem, sem_ll_node_t* new_node) {
-    sem_ll_node_t* prev = NULL;
-    sem_ll_node_t* current = sem->waiting_head;
-
-    while (current != NULL && current->task->priority >= new_node->task->priority) 
-    {
-        prev = current;
-        current = current->next;
-    }
-
-    if (prev == NULL) 
-    {
-        // new_node is the new head
-        sem->waiting_head = new_node;
-    } else {
-        prev->next = new_node;
-    }
-
-    new_node->next = current;
-
-    if (current == NULL) 
-    {
-        // new_node is the new tail
-        sem->waiting_tail = new_node;
-    }
+static void sem_queue_task(sem_t* sem, tcb_t *task) {
+    task_ll_insert(task, &(sem->waiting_head));
 }

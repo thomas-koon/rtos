@@ -10,6 +10,8 @@
         "task.h": "c",
         "cstdint": "c",
         "semaphore.h": "c",
-        "scheduler.h": "c"
+        "kernel.h": "c",
+        "mutex.h": "c",
+        "list.h": "c"
     }
 }

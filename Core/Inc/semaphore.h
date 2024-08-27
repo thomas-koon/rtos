@@ -2,22 +2,16 @@
 #define SEMAPHORE_H
 
 #include "task.h"
-
-typedef struct sem_ll_node_t
-{
-    tcb_t * task;
-    struct sem_ll_node_t * next;
-} sem_ll_node_t;
+#include "list.h"
 
 typedef struct 
 {
     int count;
     int max_count;
-    sem_ll_node_t * waiting_head;
-    sem_ll_node_t * waiting_tail;
+    task_ll_node_t * waiting_head;
 } sem_t;
 
-void sem_init(sem_t * sem, int init_count);
+void sem_init(sem_t ** sem, int init_count);
 void sem_post(sem_t * sem);
 void sem_wait(sem_t * sem);
 
