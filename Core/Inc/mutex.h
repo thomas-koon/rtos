@@ -10,7 +10,7 @@ typedef struct
     task_ll_node_t * waiting_head;
 } mutex_t;
 
-void mutex_init(mutex_t * mutex);
+void mutex_init(mutex_t ** mutex);
 void mutex_lock(mutex_t * mutex);
 void mutex_unlock(mutex_t * mutex);
 
