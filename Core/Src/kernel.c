@@ -51,7 +51,7 @@ void add_task(tcb_t *task)
     {   
         tasks[num_tasks] = task;
         num_tasks++;
-        insert_task_in_ready_queue(task);
+        set_task_ready(task);
     }
 
 }
@@ -78,7 +78,7 @@ void resume_task(tcb_t *task) {
     if(task->state == TASK_SUSPENDED)
     {
         task->state = TASK_READY;
-        insert_task_in_ready_queue(task);
+        set_task_ready(task);
     }
     __enable_irq();
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
@@ -96,8 +96,9 @@ tcb_t * get_task_by_id(int id)
     return NULL;
 }
 
-void insert_task_in_ready_queue(tcb_t *task) 
+void set_task_ready(tcb_t *task) 
 {
+    task->state = TASK_READY;
     task_ll_insert(task, &(ready_queue_head));
 }
 
@@ -179,7 +180,7 @@ void switch_task(void)
             if (curr_task != NULL && curr_task->state == TASK_RUNNING) 
             {
                 curr_task->state = TASK_READY;
-                insert_task_in_ready_queue(curr_task);
+                set_task_ready(curr_task);
             }
 
             next_ready_task->state = TASK_RUNNING;

@@ -13,7 +13,7 @@ void resume_task(tcb_t *task);
 tcb_t * get_task_by_id(int i);
 tcb_t * get_current_task(void);
 
-void insert_task_in_ready_queue(tcb_t * task);
+void set_task_ready(tcb_t * task);
 
 void switch_task(void);
 

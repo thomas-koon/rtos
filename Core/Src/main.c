@@ -17,6 +17,7 @@
 
 #include "main.h"
 #include "kernel.h"
+#include "mutex.h"
 #include "semaphore.h"
 #include "task.h"
 #include <stdlib.h>
@@ -34,35 +35,44 @@ static void MX_USART2_UART_Init(void);
 void UART_Print(const char *str);
 
 sem_t *sem;
+mutex_t *mutex;
 volatile int shared_counter = 0;
 
-// Task 1: Increment shared_counter
+tcb_t *task1;
+tcb_t *task2;
+tcb_t *task3;
+
 void task1_func(void *parameters) 
 {
   while (1) 
   {
-    sem_wait(sem); 
-    shared_counter++; // Critical section: Increment counter
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "Task 1 incremented counter: %d\n\r", shared_counter);
-    UART_Print(buffer);
-    sem_post(sem);
-    for (volatile int i = 0; i < 100000; i++);
+    mutex_lock(mutex);
+    for (volatile int i = 0; i < 10; i++)
+    {
+      UART_Print("Task 1 (low prio) holding the mutex!\r\n");
+      for (volatile int i = 0; i < 200000; i++);
+    };
+    mutex_unlock(mutex);
   }
 }
 
-// Task 2: Decrement shared_counter
 void task2_func(void *parameters) 
 {
   while (1) 
   {
-    sem_wait(sem);
-    shared_counter--; // Critical section: Decrement counter
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "Task 2 decremented counter: %d\n\r", shared_counter);
-    UART_Print(buffer);
-    sem_post(sem); 
-    for (volatile int i = 0; i < 100000; i++);
+    UART_Print("Task 2\r\n");
+    for (volatile int i = 0; i < 500000; i++);
+  }
+}
+
+void task3_func(void *parameters) 
+{
+  while (1) 
+  {
+    UART_Print("Task 3 (high prio) about to lock the mutex!\r\n");
+    mutex_lock(mutex);
+    mutex_unlock(mutex);
+    UART_Print("Task 3 (high prio) unlocked the mutex.\r\n");
   }
 }
 
@@ -105,16 +115,16 @@ int main(void)
 
   UART_Print("\r\n\r\n");
 
-  tcb_t *task1;
-  tcb_t *task2;
-
   uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
   uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
 
   create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
-  create_task(&task2, task2_func, NULL, 1, task2_stack, STACK_SIZE, 2);
+  create_task(&task2, task2_func, NULL, 2, task2_stack, STACK_SIZE, 2);
+  create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
-  sem_init(&sem, 1);
+  //sem_init(&sem, 1);
+  mutex_init(&mutex);
 
   scheduler_init(task1);
 

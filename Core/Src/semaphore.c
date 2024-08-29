@@ -51,8 +51,7 @@ void sem_post(sem_t * sem)
 
         free(head); 
 
-        task->state = TASK_READY;
-        insert_task_in_ready_queue(task);
+        set_task_ready(task);
 
         snprintf(buffer, 100, "Task %d released semaphore. Task %d is now ready.\r\n", curr_task->id, task->id);
         UART_Print(buffer);
