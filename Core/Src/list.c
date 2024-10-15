@@ -1,5 +1,6 @@
 #include "list.h"
-
+#include "main.h"
+#include "pool.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -15,7 +16,7 @@ void task_ll_insert(tcb_t *task, task_ll_node_t **head)
         curr = curr->next;
     }
 
-    task_ll_node_t *task_node = (task_ll_node_t*) malloc(sizeof(task_ll_node_t));
+    task_ll_node_t *task_node = (task_ll_node_t*) pool_alloc(pool);
     if (task_node == NULL) 
     {
         return;
@@ -66,7 +67,7 @@ void task_ll_remove(tcb_t *task, task_ll_node_t **head)
         // Clear the next pointer of the removed node
         curr->next = NULL;
 
-        free(curr);
+        pool_free(pool, curr);
     }
 
 }

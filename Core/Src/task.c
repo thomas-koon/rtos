@@ -1,4 +1,5 @@
 #include "task.h"
+#include "pool.h"
 #include "main.h"
 #include "kernel.h"
 #include <string.h>
@@ -10,11 +11,11 @@
 static void task_exit_error(void);
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size);
 
-void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t priority, uint32_t *stack, uint32_t stack_size, uint8_t id)
+void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t priority, uint32_t *stack, uint32_t stack_size, int id)
 {
-    *task = (tcb_t *) malloc(sizeof(tcb_t));
+    *task = (tcb_t *) pool_alloc(pool);
     
-    uint32_t *stack_top = stack + stack_size - 1;
+    uint32_t *stack_top = (uint32_t*)((char*) stack + stack_size) - 1;
     stack_top = (uint32_t *)((uint32_t)stack_top & ~0x7); // Ensure 8-byte alignment
 
     (*task)->stack_top = stack_top;
@@ -34,10 +35,9 @@ void create_task(tcb_t **task, task_func_t task_func, void *parameters, uint32_t
 static void init_task_stack(tcb_t *task, task_func_t task_func, void *parameters, uint32_t *stack, uint32_t stack_size)
 {
 
-    memset(stack, 0, stack_size * sizeof(uint32_t));
+    memset(stack, 0, stack_size);
 
-    uint32_t *stack_ptr = stack + stack_size - 1;
-    //stack_ptr = (uint32_t *)((uint32_t)stack_ptr & ~0x7); // Ensure 8-byte alignment
+    uint32_t *stack_ptr = (uint32_t*)((char*) stack + stack_size) - 1;
 
     // Needs to be 8-byte aligned
     if ((uint32_t) stack_ptr & 0x04) 
@@ -68,7 +68,6 @@ static void task_exit_error(void)
 	/*
     * Used to catch tasks that try to return from their function.
     */
-	UART_Print("no\r\n");
     __disable_irq();
 	for( ;; );
 }

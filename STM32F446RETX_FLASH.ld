@@ -44,8 +44,9 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
+  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 120K
   FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 512K
+  POOL (xrw)  : ORIGIN = 0x20002000,   LENGTH = 8K
 }
 
 /* Sections */
@@ -173,6 +174,13 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
+  .pool (NOLOAD) :
+  {
+    . = ALIGN(4);
+    KEEP(*(.pool))
+    . = ALIGN(4);
+  } >POOL
+
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {
@@ -182,4 +190,5 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+
 }

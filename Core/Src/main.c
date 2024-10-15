@@ -17,14 +17,17 @@
 
 #include "main.h"
 #include "kernel.h"
+#include "logger.h"
 #include "mutex.h"
 #include "semaphore.h"
 #include "task.h"
+#include "pool.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "stm32f4xx_ll_cortex.h"
 
-#define STACK_SIZE 300
+#define STACK_SIZE 256
 #define FPCCR (*(volatile uint32_t *)0xE000EF34)
 
 UART_HandleTypeDef huart2;
@@ -47,10 +50,8 @@ void task1_func(void *parameters)
   while (1) 
   {
     mutex_lock(mutex);
-    for (volatile int i = 0; i < 10; i++)
+    for (volatile int i = 0; i < 20000; i++)
     {
-      UART_Print("Task 1 (low prio) holding the mutex!\r\n");
-      for (volatile int i = 0; i < 200000; i++);
     };
     mutex_unlock(mutex);
   }
@@ -60,7 +61,6 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    UART_Print("Task 2\r\n");
     for (volatile int i = 0; i < 500000; i++);
   }
 }
@@ -69,16 +69,15 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    UART_Print("Task 3 (high prio) about to lock the mutex!\r\n");
     mutex_lock(mutex);
-    mutex_unlock(mutex);
-    UART_Print("Task 3 (high prio) unlocked the mutex.\r\n");
+    for (volatile int i = 0; i < 20000; i++)
+    {
+    };
+    mutex_unlock(mutex);  
   }
 }
 
-
-
-
+pool_t * pool;
 
 /**
   * @brief  The application entry point.
@@ -86,59 +85,38 @@ void task3_func(void *parameters)
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  //UART_Print("starting!\n");
   __disable_irq();
-  /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  /* USER CODE BEGIN 2 */
 
-  UART_Print("\r\n\r\n");
+  // enable MPU
+  LL_MPU_Enable(LL_MPU_CTRL_PRIVILEGED_DEFAULT);
 
-  uint32_t *task1_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  uint32_t *task2_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
-  uint32_t *task3_stack = (uint32_t *)malloc(STACK_SIZE * sizeof(uint32_t));
+  pool_init(&pool, 15, STACK_SIZE);
 
-  create_task(&task1, task1_func, NULL, 1, task1_stack, STACK_SIZE, 1);
-  create_task(&task2, task2_func, NULL, 2, task2_stack, STACK_SIZE, 2);
+  uint32_t* task1_stack = pool_alloc(pool);
+  //uint32_t *task2_stack = pool_alloc(pool);
+  uint32_t *task3_stack = pool_alloc(pool);
+
+  create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
+  //create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
   create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
-  //sem_init(&sem, 1);
+  set_block_RO(task1_stack, pool);
+  set_block_RO(task3_stack, pool);
+
   mutex_init(&mutex);
 
   scheduler_init(task1);
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -219,13 +197,6 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 2 */
 
-}
-
-void UART_Print(const char *str)
-{
-  enter_critical();
-  HAL_UART_Transmit(&huart2, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
-  exit_critical();
 }
 
 void toggle_led()

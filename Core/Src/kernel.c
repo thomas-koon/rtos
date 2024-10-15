@@ -1,11 +1,15 @@
 #include "main.h"
 #include "kernel.h"
 #include "list.h"
+#include "pool.h"
+#include "logger.h"
 #include "stm32f4xx.h"  
 #include "stm32f4xx_it.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "cmsis_gcc.h"
+
 
 #define MAX_TASKS 10
 #define MASK_PRIORITY        (0x06<<4)
@@ -23,6 +27,7 @@ void scheduler_init(tcb_t * first_task)
     remove_task_from_ready_queue(first_task);
     curr_task = first_task;
     curr_task->state = TASK_RUNNING;
+    set_block_RW(curr_task->stack_bottom, pool);
 
     // From the ARM docs:
     // "In an RTOS environment, 
@@ -34,6 +39,8 @@ void scheduler_init(tcb_t * first_task)
     NVIC_SetPriority(PendSV_IRQn, 0xFF);
 
     SysTick->LOAD = (16000000 / 1) - 1;
+
+    debug_log(DEBUG_KERNEL_STARTING, 0);
 
     __enable_irq();
 
@@ -125,16 +132,21 @@ void mask_irq(void)
     );
 }
 
+int last_t_bit = 0;
+
 void unmask_irq(void)
 {
     uint32_t tmp = 0;
-
-    __asm volatile (
-        " msr basepri, %0  \n\t"
-        :
-        : "r" (tmp)
-    );
+    __set_BASEPRI(0);
+    // __asm volatile (
+    //     " msr basepri, %0  \n\t"
+    //     :
+    //     : "r" (tmp)
+    // );
+    last_t_bit = __get_xPSR() & (1 << 24);
 }
+
+int x = 0;
 
 void enter_critical(void)
 {
@@ -145,6 +157,7 @@ void enter_critical(void)
 
 void exit_critical(void)
 {
+    x++;
     if(--nested_critical == 0)
         unmask_irq();
 }
@@ -173,7 +186,6 @@ void switch_task(void)
         // If ready task has a higher or equal priority than current task, or current task suspended or blocked
         if (curr_task == NULL || next_ready_task->priority >= curr_task->priority || curr_task->state == TASK_SUSPENDED || curr_task->state == TASK_BLOCKED) 
         {
-
             remove_task_from_ready_queue(next_ready_task);
 
             // Queue the current task
@@ -185,7 +197,14 @@ void switch_task(void)
 
             next_ready_task->state = TASK_RUNNING;
 
+            // Set curr_task stack to read only
+            set_block_RO(curr_task->stack_bottom, pool);
+
             curr_task = next_ready_task;
+            debug_log(DEBUG_TASK_SWITCHED_TO, (uint32_t) curr_task->id);
+            
+            // set (new) curr task stack writeable
+            set_block_RW(curr_task->stack_bottom, pool);
         } 
     } 
     unmask_irq();

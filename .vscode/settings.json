@@ -12,6 +12,14 @@
         "semaphore.h": "c",
         "kernel.h": "c",
         "mutex.h": "c",
-        "list.h": "c"
+        "list.h": "c",
+        "pool.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "stddef.h": "c",
+        "stm32f4xx_it.h": "c",
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "stdint.h": "c"
     }
 }

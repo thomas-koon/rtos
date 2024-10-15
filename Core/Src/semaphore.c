@@ -1,5 +1,6 @@
 #include "semaphore.h"
 #include "kernel.h"
+#include "pool.h"
 #include "main.h"
 #include "list.h"
 #include "stm32f4xx.h"
@@ -13,7 +14,7 @@ static void sem_queue_task(sem_t* sem, tcb_t* task);
 
 void sem_init(sem_t **sem, int init_count) 
 {
-    *sem = (sem_t *)malloc(sizeof(sem_t));
+    *sem = (sem_t *) pool_alloc(pool);
     if (*sem == NULL) 
     {
         return; 
@@ -36,8 +37,8 @@ void sem_post(sem_t * sem)
     if(sem->waiting_head == NULL && sem->count < sem->max_count) 
     {
         sem->count++; // if no tasks waiting, resource available
-        snprintf(buffer, 100, "Task %d released semaphore. New count: %d\r\n", curr_task->id, sem->count);
-        UART_Print(buffer);
+        // snprintf(buffer, 100, "Task %d released semaphore. New count: %d\r\n", curr_task->id, sem->count);
+        // UART_Print(buffer);
         exit_critical();
         return;
     }
@@ -49,12 +50,12 @@ void sem_post(sem_t * sem)
         
         sem->waiting_head = sem->waiting_head->next;
 
-        free(head); 
+        pool_free(pool, head);
 
         set_task_ready(task);
 
-        snprintf(buffer, 100, "Task %d released semaphore. Task %d is now ready.\r\n", curr_task->id, task->id);
-        UART_Print(buffer);
+        // snprintf(buffer, 100, "Task %d released semaphore. Task %d is now ready.\r\n", curr_task->id, task->id);
+        // UART_Print(buffer);
 
         exit_critical();
         pend_yield();
@@ -75,8 +76,8 @@ void sem_wait(sem_t * sem)
     {
         sem->count--; 
 
-        snprintf(buffer, 100, "Task %d acquired semaphore. New count: %d\r\n", curr_task->id, sem->count);
-        UART_Print(buffer);
+        // snprintf(buffer, 100, "Task %d acquired semaphore. New count: %d\r\n", curr_task->id, sem->count);
+        // UART_Print(buffer);
 
         exit_critical();
         return;
@@ -87,8 +88,8 @@ void sem_wait(sem_t * sem)
 
         curr_task->state = TASK_BLOCKED;
 
-        snprintf(buffer, 100, "Task %d is blocked and added to semaphore queue.\r\n", curr_task->id);
-        UART_Print(buffer);
+        // snprintf(buffer, 100, "Task %d is blocked and added to semaphore queue.\r\n", curr_task->id);
+        // UART_Print(buffer);
 
         exit_critical();
 
