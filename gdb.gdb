@@ -10,10 +10,15 @@ monitor reset halt
 # Load the program into the target
 load
 
-break mutex.c:50
-
+# switch twice
+break kernel.c:189
+c
 c
 
-b *0x8008e0e
+# look at freeing 0x20002800 on switch
+break pool.c:136
+
+# Faults here
+break list.c:25
 
 c

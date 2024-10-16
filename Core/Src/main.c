@@ -61,7 +61,7 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    for (volatile int i = 0; i < 500000; i++);
+    //for (volatile int i = 0; i < 500000; i++);
   }
 }
 
@@ -97,17 +97,18 @@ int main(void)
   // enable MPU
   LL_MPU_Enable(LL_MPU_CTRL_PRIVILEGED_DEFAULT);
 
-  pool_init(&pool, 15, STACK_SIZE);
+  pool_init(&pool, 16, STACK_SIZE);
 
   uint32_t* task1_stack = pool_alloc(pool);
-  //uint32_t *task2_stack = pool_alloc(pool);
+  uint32_t *task2_stack = pool_alloc(pool);
   uint32_t *task3_stack = pool_alloc(pool);
 
   create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
-  //create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
+  create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
   create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
   set_block_RO(task1_stack, pool);
+  set_block_RO(task2_stack, pool);
   set_block_RO(task3_stack, pool);
 
   mutex_init(&mutex);

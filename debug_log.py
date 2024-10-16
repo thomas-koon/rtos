@@ -32,19 +32,23 @@ def translate_uart_output(input_file_path, output_file_path):
     with open(input_file_path, 'r', errors='ignore') as file:  # Ignore invalid chars
         with open(output_file_path, 'w') as outfile:
             for line in file:
+                line = line.strip()  # Remove any extra whitespace
                 try:
-                    # Split the UART output line into debug ID and parameter
-                    debug_id, param = line.split()
-                    debug_id = int(debug_id, 16)
-                    param = int(param, 16) if param != "0" else 0
-                    
-                    # Get the human-readable message
-                    message = get_debug_message(debug_id, param)
+                    # Check if line contains two space-separated parts
+                    if len(line.split()) == 2:
+                        debug_id, param = line.split()
+                        debug_id = int(debug_id, 16)
+                        param = int(param, 16) if param != "0" else 0
+                        
+                        # Get the human-readable message
+                        message = get_debug_message(debug_id, param)
+                    else:
+                        # If the line doesn't match expected format, treat it as plain text
+                        message = line
+
                     translated_output.append(message)
-                    
-                    # Write the message to the output file
                     outfile.write(message + "\n")
-                
+
                 except (ValueError, IndexError):
                     # Skip invalid/corrupted lines
                     continue

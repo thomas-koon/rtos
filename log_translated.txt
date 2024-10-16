@@ -1,3 +1,4 @@
+Pool block initiated at 0x20002000
 Pool block initiated at 0x20002100
 Pool block initiated at 0x20002200
 Pool block initiated at 0x20002300
@@ -12,6 +13,8 @@ Pool block initiated at 0x20002b00
 Pool block initiated at 0x20002c00
 Pool block initiated at 0x20002d00
 Pool block initiated at 0x20002e00
+Pool block initiated at 0x20002f00
+
 Pool block allocated at 0x20002000
 Pool block allocated at 0x20002100
 Pool block allocated at 0x20002200
@@ -19,908 +22,1209 @@ Pool block allocated at 0x20002300
 Pool block allocated at 0x20002400
 Pool block allocated at 0x20002500
 Pool block allocated at 0x20002600
-Pool block freed at 0x20002300
+Pool block allocated at 0x20002700
+Pool block allocated at 0x20002800
+Pool block allocated at 0x20002900
+
+Pool block freed at 0x20002400
 Kernel starting
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
 Task switched to 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Waiting for mutex held by 0x3
-Pool block allocated at 0x20002300
-Pool block freed at 0x20002500
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x3
 Mutex released by 0x3
 Mutex taken by 0x1
-Pool block allocated at 0x20002500
-Pool block freed at 0x20002300
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
 Task switched to 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Waiting for mutex held by 0x1
-Pool block allocated at 0x20002300
-Pool block freed at 0x20002500
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x1
 Mutex released by 0x1
 Mutex taken by 0x3
-Pool block allocated at 0x20002500
-Pool block freed at 0x20002300
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
 Task switched to 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Waiting for mutex held by 0x3
-Pool block allocated at 0x20002300
-Pool block freed at 0x20002500
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x3
 Mutex released by 0x3
 Mutex taken by 0x1
-Pool block allocated at 0x20002500
-Pool block freed at 0x20002300
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
 Task switched to 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
 Mutex released by 0x1
-Current task ID is 0x1
 Mutex lock called by 0x1
 Mutex taken by 0x1
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Waiting for mutex held by 0x1
-Pool block allocated at 0x20002300
-Pool block freed at 0x20002500
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
 Task switched to 0x1
 Mutex released by 0x1
 Mutex taken by 0x3
-Pool block allocated at 0x20002500
-Pool block freed at 0x20002300
-Pool block freed at 0x20002500
-Pool block allocated at 0x20002500
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
 Task switched to 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
-Current task ID is 0x3
 Mutex lock called by 0x3
 Mutex taken by 0x3
 Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x1
+Mutex lock called by 0x1
+Waiting for mutex held by 0x3
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x3
+Mutex released by 0x3
+Mutex taken by 0x1
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
+Task switched to 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Mutex released by 0x1
+Mutex lock called by 0x1
+Mutex taken by 0x1
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x3
+Mutex lock called by 0x3
+Waiting for mutex held by 0x1
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x1
+Mutex released by 0x1
+Mutex taken by 0x3
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2
+Pool block freed at 0x20002800
+Pool block allocated at 0x20002800
+Task switched to 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Mutex released by 0x3
+Mutex lock called by 0x3
+Mutex taken by 0x3
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x1
+Mutex lock called by 0x1
+Waiting for mutex held by 0x3
+Pool block allocated at 0x20002400
+Pool block freed at 0x20002800
+Task switched to 0x2
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x3
+Mutex released by 0x3
+Mutex taken by 0x1
+Pool block allocated at 0x20002800
+Pool block freed at 0x20002400
+Pool block freed at 0x20002600
+Pool block allocated at 0x20002600
+Task switched to 0x2

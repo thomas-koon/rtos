@@ -20,7 +20,8 @@
 #define DEBUG_KERNEL_STARTING            0x000A
 #define DEBUG_CURR_TASK                  0x000B
 
-#define DEBUG_GENERIC                    0xFFFF
+#define DEBUG_TASK_RUNNING               0x000C
+
 
 void debug_log(uint32_t id, uint32_t param);
 void uart_print(const char *str);

@@ -21,8 +21,6 @@ void mutex_lock(mutex_t * mutex)
 {
 
     enter_critical();
-
-    debug_log(DEBUG_CURR_TASK, (uint32_t) get_current_task()->id);
     
     tcb_t * curr_task = get_current_task();
 

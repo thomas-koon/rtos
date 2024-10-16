@@ -131,7 +131,7 @@ void set_block_RO(void* addr, pool_t* pool)
 
     // MPU: Set this subregion to be read-only.
     uint32_t region_start_addr = (uint32_t)addr & ~0x7FF; // Get the start of the region (2KB aligned)
-    uint32_t region_num = (region_start_addr - pool_start) / pool->block_size;
+    uint32_t region_num = (region_start_addr - pool_start) / (pool->block_size * 8);
     // Switch to the current region to use its RASR and RBAR values
     WRITE_REG(MPU->RNR, region_num);
 
