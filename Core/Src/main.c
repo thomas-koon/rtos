@@ -61,7 +61,11 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    //for (volatile int i = 0; i < 500000; i++);
+    mutex_lock(mutex);
+    for (volatile int i = 0; i < 20000; i++)
+    {
+    };
+    mutex_unlock(mutex);
   }
 }
 
