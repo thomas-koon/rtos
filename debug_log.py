@@ -22,6 +22,12 @@ def get_debug_message(debug_id, param):
         return "Kernel starting"
     elif debug_id == 0x000B:
         return f"Current task ID is {hex(param)}"
+    elif debug_id == 0x000C:
+        return f"Task {hex(param)} posting to MQ"
+    elif debug_id == 0x000D:
+        return f"Data {hex(param)} posted to MQ"
+    elif debug_id == 0x000E:
+        return f"Task {hex(param)} blocked trying to post to MQ"
     else:
         return f"Unknown debug code {hex(debug_id)} with param {hex(param)}"
 

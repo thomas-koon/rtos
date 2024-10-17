@@ -20,7 +20,11 @@
 #define DEBUG_KERNEL_STARTING            0x000A
 #define DEBUG_CURR_TASK                  0x000B
 
-#define DEBUG_TASK_RUNNING               0x000C
+// message queue debug statements
+#define DEBUG_MQ_POSTER_TASK_ID          0x000C
+#define DEBUG_MQ_DATA_POSTED             0x000D
+#define DEBUG_MQ_BLOCK_ON_POST_TASK_ID   0x000E
+
 
 
 void debug_log(uint32_t id, uint32_t param);

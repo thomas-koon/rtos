@@ -20,6 +20,7 @@
         "stm32f4xx_it.h": "c",
         "*.tcc": "cpp",
         "cmath": "cpp",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "queue.h": "c"
     }
 }

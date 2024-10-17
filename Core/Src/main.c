@@ -22,10 +22,13 @@
 #include "semaphore.h"
 #include "task.h"
 #include "pool.h"
+#include "queue.h"
+
+#include "stm32f4xx_ll_cortex.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "stm32f4xx_ll_cortex.h"
 
 #define STACK_SIZE 256
 #define FPCCR (*(volatile uint32_t *)0xE000EF34)
@@ -40,20 +43,22 @@ void UART_Print(const char *str);
 sem_t *sem;
 mutex_t *mutex;
 volatile int shared_counter = 0;
+msg_queue_t * mq;
 
 tcb_t *task1;
 tcb_t *task2;
 tcb_t *task3;
 
+pool_t * pool;
+
 void task1_func(void *parameters) 
 {
   while (1) 
   {
-    mutex_lock(mutex);
-    for (volatile int i = 0; i < 20000; i++)
+    msg_post(mq, 1);
+    for (volatile int i = 0; i < 5000000; i++)
     {
-    };
-    mutex_unlock(mutex);
+    }
   }
 }
 
@@ -61,11 +66,10 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    mutex_lock(mutex);
-    for (volatile int i = 0; i < 20000; i++)
+    msg_post(mq, 2);
+    for (volatile int i = 0; i < 5000000; i++)
     {
-    };
-    mutex_unlock(mutex);
+    }
   }
 }
 
@@ -73,15 +77,9 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    mutex_lock(mutex);
-    for (volatile int i = 0; i < 20000; i++)
-    {
-    };
-    mutex_unlock(mutex);  
+    uart_print("a");
   }
 }
-
-pool_t * pool;
 
 /**
   * @brief  The application entry point.
@@ -109,13 +107,13 @@ int main(void)
 
   create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
-  create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
+  create_task(&task3, task3_func, NULL, 1, task3_stack, STACK_SIZE, 3);
 
   set_block_RO(task1_stack, pool);
   set_block_RO(task2_stack, pool);
   set_block_RO(task3_stack, pool);
 
-  mutex_init(&mutex);
+  msg_queue_init(&mq, 4);
 
   scheduler_init(task1);
 
