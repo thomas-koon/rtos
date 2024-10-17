@@ -24,8 +24,9 @@
 #define DEBUG_MQ_POSTER_TASK_ID          0x000C
 #define DEBUG_MQ_DATA_POSTED             0x000D
 #define DEBUG_MQ_BLOCK_ON_POST_TASK_ID   0x000E
-
-
+#define DEBUG_MQ_PENDER_TASK_ID          0x000F
+#define DEBUG_MQ_DATA_RECEIVED           0x0010
+#define DEBUG_MQ_BLOCK_ON_PEND_TASK_ID   0x0011
 
 void debug_log(uint32_t id, uint32_t param);
 void uart_print(const char *str);

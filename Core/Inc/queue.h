@@ -12,7 +12,7 @@ typedef struct msg_t
 
 typedef struct msg_queue_t
 {
-    msg_t* msg_head; // Pend from here 
+    msg_t* msg_head;      // Pend from here 
     msg_t* msg_tail;      // Post to here
     int capacity;
     int size;

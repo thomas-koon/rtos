@@ -26,18 +26,22 @@ void msg_post(msg_queue_t* queue, uint32_t msg_content)
     msg->data = msg_content;
     msg->next = NULL;
 
-    debug_log(DEBUG_MQ_POSTER_TASK_ID, get_current_task()->id);
+    uart_print("\r\n");
+
+    tcb_t* curr_task = get_current_task();
+
+    debug_log(DEBUG_MQ_POSTER_TASK_ID, curr_task->id);
 
     // queue is full
     if(queue->size >= queue->capacity)
     {
         // block this task
-        task_ll_insert(get_current_task(), &(queue->waiting_head_post));
-        get_current_task()->state = TASK_BLOCKED;
+        task_ll_insert(curr_task, &(queue->waiting_head_post));
+        curr_task->state = TASK_BLOCKED;
 
         pend_yield();
 
-        debug_log(DEBUG_MQ_BLOCK_ON_POST_TASK_ID, get_current_task()->id);
+        debug_log(DEBUG_MQ_BLOCK_ON_POST_TASK_ID, curr_task->id);
 
         exit_critical();
         
@@ -49,6 +53,7 @@ void msg_post(msg_queue_t* queue, uint32_t msg_content)
 
     if(queue->msg_tail == NULL)
     {
+        queue->msg_head = msg;
         queue->msg_tail = msg;
     }
     else
@@ -80,16 +85,25 @@ void msg_post(msg_queue_t* queue, uint32_t msg_content)
 uint32_t msg_pend(msg_queue_t* queue)
 {
     enter_critical();
+
     uint32_t msg_data;
+
+    tcb_t* curr_task = get_current_task();
+
+    uart_print("\r\n");
+
+    debug_log(DEBUG_MQ_PENDER_TASK_ID, curr_task->id);
 
     // no messages in queue
     if(queue->size == 0)
     {
         // block this task
-        task_ll_insert(get_current_task(), &(queue->waiting_head_pend));
+        task_ll_insert(curr_task, &(queue->waiting_head_pend));
         get_current_task()->state = TASK_BLOCKED;
 
         pend_yield();
+
+        debug_log(DEBUG_MQ_BLOCK_ON_PEND_TASK_ID, curr_task->id);
 
         exit_critical();
 
@@ -99,11 +113,25 @@ uint32_t msg_pend(msg_queue_t* queue)
         enter_critical();
     }
 
+    msg_t* old_msg_head = queue->msg_head;
     msg_data = queue->msg_head->data;
     queue->msg_head = queue->msg_head->next;
+    pool_free(pool, old_msg_head);
 
-    queue->size--;
+    debug_log(DEBUG_MQ_DATA_RECEIVED, msg_data);
 
+    uart_print("\r\n");
+
+    if(queue->waiting_head_post != NULL)
+    {
+        set_task_ready(queue->waiting_head_post->task);
+        task_ll_remove(queue->waiting_head_post->task, &(queue->waiting_head_post));
+        pend_yield();
+    }
+    else
+    {
+        queue->size--;
+    }
 
     exit_critical();
 }

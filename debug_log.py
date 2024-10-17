@@ -28,6 +28,12 @@ def get_debug_message(debug_id, param):
         return f"Data {hex(param)} posted to MQ"
     elif debug_id == 0x000E:
         return f"Task {hex(param)} blocked trying to post to MQ"
+    elif debug_id == 0x000F:
+        return f"Task {hex(param)} pending on MQ"
+    elif debug_id == 0x0010:
+        return f"Data {hex(param)} received from MQ"
+    elif debug_id == 0x0011:
+        return f"Task {hex(param)} blocked pending on MQ"
     else:
         return f"Unknown debug code {hex(debug_id)} with param {hex(param)}"
 

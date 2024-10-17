@@ -77,7 +77,7 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    uart_print("a");
+    msg_pend(mq);
   }
 }
 
