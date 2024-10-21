@@ -55,10 +55,11 @@ void task1_func(void *parameters)
 {
   while (1) 
   {
-    msg_post(mq, 1);
+    sem_wait(sem);
     for (volatile int i = 0; i < 5000000; i++)
     {
     }
+    sem_post(sem);
   }
 }
 
@@ -66,10 +67,11 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    msg_post(mq, 2);
+    sem_wait(sem);
     for (volatile int i = 0; i < 5000000; i++)
     {
     }
+    sem_post(sem);
   }
 }
 
@@ -77,7 +79,11 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    msg_pend(mq);
+    sem_wait(sem);
+    for (volatile int i = 0; i < 5000000; i++)
+    {
+    }
+    sem_post(sem);
   }
 }
 
@@ -107,13 +113,14 @@ int main(void)
 
   create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
-  create_task(&task3, task3_func, NULL, 1, task3_stack, STACK_SIZE, 3);
+  create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
   set_block_RO(task1_stack, pool);
   set_block_RO(task2_stack, pool);
   set_block_RO(task3_stack, pool);
 
-  msg_queue_init(&mq, 4);
+  //msg_queue_init(&mq, 4);
+  sem_init(&sem, 2);
 
   scheduler_init(task1);
 

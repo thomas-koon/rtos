@@ -210,8 +210,6 @@ __weak void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 
-  //UART_Print("systick\r\n");
-
   mask_irq();
 
   SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;

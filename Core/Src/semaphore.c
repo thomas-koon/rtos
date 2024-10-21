@@ -3,6 +3,7 @@
 #include "pool.h"
 #include "main.h"
 #include "list.h"
+#include "logger.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
 
@@ -27,18 +28,21 @@ void sem_init(sem_t **sem, int init_count)
 
 void sem_post(sem_t * sem) 
 {
-
     enter_critical();
-
-    char buffer[100];
 
     tcb_t * curr_task = get_current_task();
     
+    debug_log(DEBUG_SPACER, 0);
+    debug_log(DEBUG_SEM_POST_TASK, curr_task->id);
+
     if(sem->waiting_head == NULL && sem->count < sem->max_count) 
     {
         sem->count++; // if no tasks waiting, resource available
-        // snprintf(buffer, 100, "Task %d released semaphore. New count: %d\r\n", curr_task->id, sem->count);
-        // UART_Print(buffer);
+        
+        debug_log(DEBUG_SEM_NEW_COUNT, sem->count);
+
+        debug_log(DEBUG_SPACER, 0);
+
         exit_critical();
         return;
     }
@@ -54,12 +58,13 @@ void sem_post(sem_t * sem)
 
         set_task_ready(task);
 
-        // snprintf(buffer, 100, "Task %d released semaphore. Task %d is now ready.\r\n", curr_task->id, task->id);
-        // UART_Print(buffer);
+        debug_log(DEBUG_SEM_TASK_AWAKEN, task->id);
 
         exit_critical();
         pend_yield();
     }
+
+    debug_log(DEBUG_SPACER, 0);
 
 }
 
@@ -69,15 +74,17 @@ void sem_wait(sem_t * sem)
     enter_critical();
 
     tcb_t * curr_task = get_current_task();
-    char buffer[100];
+    debug_log(DEBUG_SPACER, 0);
+    debug_log(DEBUG_SEM_WAIT_TASK, curr_task->id);
 
     // if the resource is available, take it
     if (sem->count > 0) 
     {
         sem->count--; 
+        
+        debug_log(DEBUG_SEM_NEW_COUNT, sem->count);
 
-        // snprintf(buffer, 100, "Task %d acquired semaphore. New count: %d\r\n", curr_task->id, sem->count);
-        // UART_Print(buffer);
+        debug_log(DEBUG_SPACER, 0);
 
         exit_critical();
         return;
@@ -88,14 +95,15 @@ void sem_wait(sem_t * sem)
 
         curr_task->state = TASK_BLOCKED;
 
-        // snprintf(buffer, 100, "Task %d is blocked and added to semaphore queue.\r\n", curr_task->id);
-        // UART_Print(buffer);
+        debug_log(DEBUG_SEM_TASK_BLOCKED, curr_task->id);
 
         exit_critical();
 
         pend_yield();
         
     }
+
+    debug_log(DEBUG_SPACER, 0);
 
 }
 

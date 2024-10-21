@@ -26,8 +26,6 @@ void msg_post(msg_queue_t* queue, uint32_t msg_content)
     msg->data = msg_content;
     msg->next = NULL;
 
-    uart_print("\r\n");
-
     tcb_t* curr_task = get_current_task();
 
     debug_log(DEBUG_MQ_POSTER_TASK_ID, curr_task->id);
@@ -76,8 +74,6 @@ void msg_post(msg_queue_t* queue, uint32_t msg_content)
         queue->size++;
     }
 
-    uart_print("\r\n");
-
     exit_critical();
     return;
 }
@@ -89,8 +85,6 @@ uint32_t msg_pend(msg_queue_t* queue)
     uint32_t msg_data;
 
     tcb_t* curr_task = get_current_task();
-
-    uart_print("\r\n");
 
     debug_log(DEBUG_MQ_PENDER_TASK_ID, curr_task->id);
 
@@ -119,8 +113,6 @@ uint32_t msg_pend(msg_queue_t* queue)
     pool_free(pool, old_msg_head);
 
     debug_log(DEBUG_MQ_DATA_RECEIVED, msg_data);
-
-    uart_print("\r\n");
 
     if(queue->waiting_head_post != NULL)
     {

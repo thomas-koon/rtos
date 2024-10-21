@@ -34,6 +34,20 @@ def get_debug_message(debug_id, param):
         return f"Data {hex(param)} received from MQ"
     elif debug_id == 0x0011:
         return f"Task {hex(param)} blocked pending on MQ"
+    
+    elif debug_id == 0x0012:
+        return f"Task {hex(param)} posted the semaphore"
+    elif debug_id == 0x0013:
+        return f"Task {hex(param)} waiting on semaphore"
+    elif debug_id == 0x0014:
+        return f"Semaphore new count is {hex(param)}"
+    elif debug_id == 0x0015:
+        return f"Task {hex(param)} blocked waiting on semaphore"
+    elif debug_id == 0x0016:
+        return f"Task {hex(param)} awaken by semaphore"
+    
+    elif debug_id == 0xFFFF:
+        return f"\r\n"
     else:
         return f"Unknown debug code {hex(debug_id)} with param {hex(param)}"
 
