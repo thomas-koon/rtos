@@ -24,11 +24,11 @@ void mutex_lock(mutex_t * mutex)
     
     tcb_t * curr_task = get_current_task();
 
-    debug_log(DEBUG_MUTEX_LOCK_CALLED_BY, (uint32_t) curr_task->id);
+    //debug_log(DEBUG_MUTEX_LOCK_CALLED_BY, (uint32_t) curr_task->id);
 
     if(mutex->task == NULL)
     {
-        debug_log(DEBUG_MUTEX_TAKEN_BY, (uint32_t) curr_task->id);
+        //debug_log(DEBUG_MUTEX_TAKEN_BY, (uint32_t) curr_task->id);
         mutex->task = curr_task;
         
         exit_critical();
@@ -43,7 +43,7 @@ void mutex_lock(mutex_t * mutex)
         mutex->task->priority = curr_task->priority;
     }
 
-    debug_log(DEBUG_WAIT_FOR_MUTEX_HELD_BY, (uint32_t) mutex->task->id);
+    //debug_log(DEBUG_WAIT_FOR_MUTEX_HELD_BY, (uint32_t) mutex->task->id);
     
     mutex_queue_task(mutex, curr_task);
     curr_task->state = TASK_BLOCKED;
@@ -63,18 +63,18 @@ void mutex_unlock(mutex_t * mutex)
     if(mutex->waiting_head == NULL)
     {
 
-        debug_log(DEBUG_MUTEX_RELEASED_BY, (uint32_t) mutex->task->id);
+        //debug_log(DEBUG_MUTEX_RELEASED_BY, (uint32_t) mutex->task->id);
 
         mutex->task = NULL;
         exit_critical();
         return;
     }
 
-    debug_log(DEBUG_MUTEX_RELEASED_BY, (uint32_t) mutex->task->id);
+    //debug_log(DEBUG_MUTEX_RELEASED_BY, (uint32_t) mutex->task->id);
 
     mutex->task = mutex->waiting_head->task;
 
-    debug_log(DEBUG_MUTEX_TAKEN_BY, (uint32_t) mutex->task->id);
+    //debug_log(DEBUG_MUTEX_TAKEN_BY, (uint32_t) mutex->task->id);
 
     set_task_ready(mutex->task);
 

@@ -15,19 +15,19 @@
   ******************************************************************************
   */
 
-#include "main.h"
+#include "cond.h"
 #include "kernel.h"
 #include "logger.h"
+#include "main.h"
 #include "mutex.h"
-#include "semaphore.h"
-#include "task.h"
 #include "pool.h"
 #include "queue.h"
-
+#include "semaphore.h"
+#include "task.h"
 #include "stm32f4xx_ll_cortex.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define STACK_SIZE 256
@@ -40,26 +40,30 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 void UART_Print(const char *str);
 
-sem_t *sem;
-mutex_t *mutex;
+sem_t* sem;
+mutex_t* mutex;
 volatile int shared_counter = 0;
-msg_queue_t * mq;
+msg_queue_t* mq;
+cond_t* cv;
 
-tcb_t *task1;
-tcb_t *task2;
-tcb_t *task3;
+tcb_t* task1;
+tcb_t* task2;
+tcb_t* task3;
 
-pool_t * pool;
+pool_t* pool;
 
 void task1_func(void *parameters) 
 {
   while (1) 
   {
-    sem_wait(sem);
-    for (volatile int i = 0; i < 5000000; i++)
+    mutex_lock(mutex);
+    while(shared_counter < 10)
     {
+      cond_wait(cv, mutex);
     }
-    sem_post(sem);
+    debug_log(DEBUG_MISC_A, 0);
+    shared_counter = 0;
+    mutex_unlock(mutex);
   }
 }
 
@@ -67,11 +71,17 @@ void task2_func(void *parameters)
 {
   while (1) 
   {
-    sem_wait(sem);
-    for (volatile int i = 0; i < 5000000; i++)
+    mutex_lock(mutex);
+    if(shared_counter < 10)
     {
+      debug_log(DEBUG_MISC_B, shared_counter);
+      shared_counter++;
     }
-    sem_post(sem);
+    else
+    {
+      cond_signal(cv);
+    }
+    mutex_unlock(mutex);
   }
 }
 
@@ -79,11 +89,9 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    sem_wait(sem);
     for (volatile int i = 0; i < 5000000; i++)
     {
     }
-    sem_post(sem);
   }
 }
 
@@ -109,20 +117,22 @@ int main(void)
 
   uint32_t* task1_stack = pool_alloc(pool);
   uint32_t *task2_stack = pool_alloc(pool);
-  uint32_t *task3_stack = pool_alloc(pool);
+  //uint32_t *task3_stack = pool_alloc(pool);
 
   create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
-  create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
+  //create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
   set_block_RO(task1_stack, pool);
   set_block_RO(task2_stack, pool);
-  set_block_RO(task3_stack, pool);
+  //set_block_RO(task3_stack, pool);
 
   //msg_queue_init(&mq, 4);
-  sem_init(&sem, 2);
+  //sem_init(&sem, 2);
+  mutex_init(&mutex);
+  cond_init(&cv);
 
-  scheduler_init(task1);
+  scheduler_init(task2);
 
   while (1)
   {

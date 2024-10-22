@@ -1,5 +1,6 @@
 # Define a mapping of debug IDs to more human-readable messages
 def get_debug_message(debug_id, param):
+
     if debug_id == 0x0001:
         return f"Pool block initiated at {hex(param)}"
     elif debug_id == 0x0002:
@@ -8,6 +9,7 @@ def get_debug_message(debug_id, param):
         return f"Pool block freed at {hex(param)}"
     elif debug_id == 0x0004:
         return f"Current free list block at {hex(param)}"
+    
     elif debug_id == 0x0005:
         return f"Mutex lock called by {hex(param)}"
     elif debug_id == 0x0006:
@@ -18,10 +20,12 @@ def get_debug_message(debug_id, param):
         return f"Mutex released by {hex(param)}"
     elif debug_id == 0x0009:
         return f"Task switched to {hex(param)}"
+    
     elif debug_id == 0x000A:
         return "Kernel starting"
     elif debug_id == 0x000B:
         return f"Current task ID is {hex(param)}"
+    
     elif debug_id == 0x000C:
         return f"Task {hex(param)} posting to MQ"
     elif debug_id == 0x000D:
@@ -45,6 +49,29 @@ def get_debug_message(debug_id, param):
         return f"Task {hex(param)} blocked waiting on semaphore"
     elif debug_id == 0x0016:
         return f"Task {hex(param)} awaken by semaphore"
+    
+    elif debug_id == 0x0017:
+        return f"Task {hex(param)} blocked waiting on CV"
+    elif debug_id == 0x0018:
+        return f"Task {hex(param)} woke up from waiting on CV"
+    elif debug_id == 0x0019:
+        return f"Task {hex(param)} signaled on the CV"
+    
+    elif debug_id == 0x0020:
+        return f"----- Misc debug message A: {hex(param)} ----- "
+    
+    elif debug_id == 0x0021:
+        return f"##### Misc debug message B: {hex(param)} ##### "
+    
+    elif debug_id == 0x0022:
+        return f"~~~~~ Misc debug message C: {hex(param)} ~~~~~ "
+    
+    elif debug_id == 0x0023:
+        return f"===== Misc debug message D: {hex(param)} ===== "
+    
+    elif debug_id == 0x0024:
+        return f"+++++ Misc debug message E: {hex(param)} +++++" 
+
     
     elif debug_id == 0xFFFF:
         return f"\r\n"
