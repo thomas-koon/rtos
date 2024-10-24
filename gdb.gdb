@@ -10,5 +10,6 @@ monitor reset halt
 # Load the program into the target
 load
 
-break queue.c:115
+break logger.c:57
+
 c

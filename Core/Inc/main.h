@@ -49,6 +49,7 @@ void toggle_led(void);
 #define SWO_GPIO_Port GPIOB
 
 extern UART_HandleTypeDef huart2;
+extern DMA_HandleTypeDef hdma_usart2_tx;
 extern pool_t* pool;
 
 #ifdef __cplusplus

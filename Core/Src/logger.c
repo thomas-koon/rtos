@@ -1,53 +1,69 @@
-#include "logger.h"
 #include "kernel.h"
+#include "logger.h"
 #include "main.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_uart.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "stm32f4xx_hal.h"
 
 #define LOG_MESSAGE_SIZE 9
-#define UART_BUFFER_SIZE 1
-int buffer_index = 0;
-char snprintf_buffer[LOG_MESSAGE_SIZE];
-char uart_buffer[UART_BUFFER_SIZE];
+char hex_format_buffer[LOG_MESSAGE_SIZE];
 
-static void uart_send_char(char c);
+static void write_to_log_buffer(const char *msg);
 static void format_hex(char* buffer, uint32_t val);
+
+log_buffer_t log_buffer = { .head = 0, .tail = 0 };
 
 void debug_log(uint32_t id, uint32_t param)
 {
     enter_critical();
-    //snprintf(snprintf_buffer, LOG_MESSAGE_SIZE, "%x %x\r\n", id, param);
+    //snprintf(hex_format_buffer, LOG_MESSAGE_SIZE, "%x %x\r\n", id, param);
 
-    format_hex(snprintf_buffer, id);    
-    uart_print(snprintf_buffer);
+    format_hex(hex_format_buffer, id);    
+    write_to_log_buffer(hex_format_buffer);
 
-    uart_print(" ");
+    write_to_log_buffer(" ");
 
-    format_hex(snprintf_buffer, param);    
-    uart_print(snprintf_buffer);
+    format_hex(hex_format_buffer, param);    
+    write_to_log_buffer(hex_format_buffer);
 
-    uart_print("\r\n");
+    write_to_log_buffer("\r\n");
 
     exit_critical();
 }
 
-void uart_print(const char *str)
+static void write_to_log_buffer(const char *msg)
 {
-  enter_critical();
-  while (*str) 
+  while (*msg) 
   {
-    // Add characters to the buffer
-    uart_send_char(*str++);
+    log_buffer.buffer[log_buffer.head] = *msg++;
+    log_buffer.head = (log_buffer.head + 1) % LOG_BUFFER_SIZE;
   }
-  exit_critical();
 }
 
-static void uart_send_char(char c)
+void uart_dma_send()
 {
-  while( !( ((&huart2)->gState == HAL_UART_STATE_READY) && (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE)) ) );
-  (&huart2)->Instance->DR = c;
+  // if data is available
+  if(log_buffer.head != log_buffer.tail)
+  {
+    uint16_t data_size = (log_buffer.head >= log_buffer.tail) ? 
+                        (log_buffer.head - log_buffer.tail) : 
+                        (LOG_BUFFER_SIZE - log_buffer.tail);
+
+    HAL_UART_Transmit_DMA(&huart2, (uint8_t*)&log_buffer.buffer[log_buffer.tail], data_size);
+
+    log_buffer.tail = (log_buffer.tail + data_size) % LOG_BUFFER_SIZE;
+  }
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    // called when DMA transfer is complete
+    // check if more data needs to be sent
+    if (log_buffer.head != log_buffer.tail) {
+      uart_dma_send();
+    }
 }
 
 static void format_hex(char* buffer, uint32_t val)

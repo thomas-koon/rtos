@@ -2,6 +2,15 @@
 #define LOGGER_H
 
 #include "stm32f4xx_hal.h"
+#include <stdint.h>
+
+#define LOG_BUFFER_SIZE 2048
+
+typedef struct {
+    char buffer[LOG_BUFFER_SIZE];
+    volatile uint16_t head;  // data is written here
+    volatile uint16_t tail;  // data is read here (for TX)
+} log_buffer_t;
 
 #define DEBUG_SPACER                    0xFFFF
 
@@ -52,6 +61,6 @@
 
 
 void debug_log(uint32_t id, uint32_t param);
-void uart_print(const char *str);
+void uart_dma_send();
 
 #endif

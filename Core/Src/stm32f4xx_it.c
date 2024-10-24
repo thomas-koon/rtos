@@ -227,6 +227,13 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
+void USART2_IRQHandler(void)
+{ 
+  HAL_UART_IRQHandler(&huart2);
+}
 
-/* USER CODE END 1 */
+void DMA1_Stream6_IRQHandler(void)
+{
+  // Call HAL DMA IRQ handler to process the interrupt
+  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+}

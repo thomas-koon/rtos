@@ -34,9 +34,12 @@
 #define FPCCR (*(volatile uint32_t *)0xE000EF34)
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void uart_dma_init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 void UART_Print(const char *str);
 
@@ -89,9 +92,7 @@ void task3_func(void *parameters)
 {
   while (1) 
   {
-    for (volatile int i = 0; i < 5000000; i++)
-    {
-    }
+    uart_dma_send();
   }
 }
 
@@ -108,6 +109,7 @@ int main(void)
   SystemClock_Config();
 
   MX_GPIO_Init();
+  uart_dma_init();
   MX_USART2_UART_Init();
 
   // enable MPU
@@ -117,15 +119,15 @@ int main(void)
 
   uint32_t* task1_stack = pool_alloc(pool);
   uint32_t *task2_stack = pool_alloc(pool);
-  //uint32_t *task3_stack = pool_alloc(pool);
+  uint32_t *task3_stack = pool_alloc(pool);
 
   create_task(&task1, task1_func, NULL, 3, task1_stack, STACK_SIZE, 1);
   create_task(&task2, task2_func, NULL, 3, task2_stack, STACK_SIZE, 2);
-  //create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
+  create_task(&task3, task3_func, NULL, 3, task3_stack, STACK_SIZE, 3);
 
   set_block_RO(task1_stack, pool);
   set_block_RO(task2_stack, pool);
-  //set_block_RO(task3_stack, pool);
+  set_block_RO(task3_stack, pool);
 
   //msg_queue_init(&mq, 4);
   //sem_init(&sem, 2);
@@ -209,6 +211,10 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+
+  HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);                                        
+  HAL_NVIC_EnableIRQ(USART2_IRQn);
+  
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
@@ -219,9 +225,29 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-void toggle_led()
+static void uart_dma_init(void)
 {
-  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+  /* DMA controller clock enable */
+  __DMA1_CLK_ENABLE();
+
+  /* Peripheral DMA init*/
+  hdma_usart2_tx.Instance = DMA1_Stream6;
+  hdma_usart2_tx.Init.Channel = DMA_CHANNEL_4;
+  hdma_usart2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+  hdma_usart2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+  hdma_usart2_tx.Init.MemInc = DMA_MINC_ENABLE;
+  hdma_usart2_tx.Init.PeriphDataAlignment = DMA_MDATAALIGN_BYTE;
+  hdma_usart2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+  hdma_usart2_tx.Init.Mode = DMA_NORMAL;
+  hdma_usart2_tx.Init.Priority = DMA_PRIORITY_LOW;
+  hdma_usart2_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+  HAL_DMA_Init(&hdma_usart2_tx);
+
+  __HAL_LINKDMA(&huart2,hdmatx,hdma_usart2_tx);
+
+  /* DMA interrupt init */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 }
 
 /**
@@ -260,10 +286,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.
