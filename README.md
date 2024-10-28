@@ -1,4 +1,4 @@
-I am making a RTOS for ARM Cortex-M4s
+I am making an RTOS for the ARM Cortex-M4.
 
 Features:
 - Fixed priority scheduler
