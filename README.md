@@ -6,4 +6,4 @@ Features:
 - Semaphore
 - Memory pool/allocator with MPU support
 - Message queue
-- Deferred logging via DMA (with Python script to translate debug logs to human readable format)
+- Deferred logging via UART + DMA (with Python script to translate debug logs to human readable format)
